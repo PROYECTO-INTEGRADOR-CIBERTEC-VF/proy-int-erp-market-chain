@@ -1,0 +1,39 @@
+services:
+  # 1. Tu Base de Datos (Ya la tenías, solo ajustamos el nombre del servicio a 'sqlserver')
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql-tiendasgo
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=TiendasGo2026!
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - C:\Users\djbar\ProyectoIntegrador\TiendasGo\db\DB_TiendasGo:/var/opt/mssql/tiendasgo_db
+
+  # 2. Tu Backend de Java (Spring Boot)
+  ms-inventario:
+    build: ./ms-inventario
+    container_name: java-inventario
+    ports:
+      - "8081:8081"
+    environment:
+      # IMPORTANTE: Usamos 'sqlserver' en la URL porque así se llama el servicio arriba
+      - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=TiendasGo_Inv;encrypt=true;trustServerCertificate=true
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=TiendasGo2026!
+    depends_on:
+      - sqlserver
+
+  # 3. Tu Frontend de Angular
+  tiendasgo-front:
+    build: ./tiendasgo-front
+    container_name: angular-tiendasgo
+    ports:
+      - "4200:80"
+    depends_on:
+      - ms-inventario
+
+volumes:
+  tiendasgo_data:

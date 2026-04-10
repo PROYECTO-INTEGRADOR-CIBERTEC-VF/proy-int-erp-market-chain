@@ -1,0 +1,22 @@
+# --- JAVA (Maven) ---
+**/target/
+**/*.class
+**/temp/
+.mvn/
+
+# --- ANGULAR (Node) ---
+**/node_modules/
+.angular/
+dist/
+.npm/
+
+# --- IDEs & OS ---
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# --- DOCKER ---
+# Solo ignora los archivos de datos pesados si se crean dentro, 
+# pero NO ignores el docker-compose.yml
