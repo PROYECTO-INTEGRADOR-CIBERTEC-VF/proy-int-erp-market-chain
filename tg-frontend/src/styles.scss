@@ -1,1 +1,32 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap');
+@import 'tailwindcss';
+@config '../tailwind.config.js';
+
+:root {
+	color-scheme: dark;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	font-family: 'Inter', sans-serif;
+	background-color: theme('colors.background');
+	color: theme('colors.on-surface');
+}
+
+.nocturnal-shadow {
+	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 15px rgba(132, 173, 255, 0.05);
+}
+
+.primary-gradient {
+	background: linear-gradient(135deg, #84adff 0%, #0070ea 100%);
+}

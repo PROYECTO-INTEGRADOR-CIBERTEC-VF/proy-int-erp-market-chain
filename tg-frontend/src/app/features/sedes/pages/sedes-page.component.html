@@ -1,0 +1,26 @@
+<section class="space-y-6">
+  <header class="space-y-2">
+    <h1 class="font-headline text-3xl font-extrabold text-on-surface">Sedes</h1>
+    <p class="font-body text-sm text-on-surface-variant">
+      Base visual lista para conectar el listado real desde la API.
+    </p>
+  </header>
+
+  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    @for (item of [1, 2, 3]; track item) {
+      <app-card>
+        <div class="space-y-3">
+          <div class="h-5 w-2/3 animate-pulse rounded bg-surface-container-high"></div>
+          <div class="h-4 w-full animate-pulse rounded bg-surface-container-highest"></div>
+          <div class="h-4 w-4/5 animate-pulse rounded bg-surface-container-highest"></div>
+          <a
+            [routerLink]="['/sedes', item]"
+            class="inline-flex items-center font-label text-sm font-semibold text-primary hover:underline"
+          >
+            Ver detalle
+          </a>
+        </div>
+      </app-card>
+    }
+  </div>
+</section>

@@ -1,0 +1,77 @@
+<div class="flex min-h-screen bg-background text-on-surface">
+  <aside
+    class="fixed inset-y-0 left-0 z-40 w-72 border-r border-on-surface/10 bg-surface-container p-4 transition-transform duration-300 md:translate-x-0"
+    [class.-translate-x-full]="!sidebarOpen()"
+  >
+    <div class="mb-8 flex items-center justify-between border-b border-on-surface/10 pb-4">
+      <span class="font-headline text-2xl font-black tracking-tight text-primary">TiendasGo</span>
+      <button
+        class="rounded-full bg-surface-container-high p-2 text-on-surface-variant md:hidden"
+        type="button"
+        aria-label="Cerrar menu"
+        (click)="closeSidebar()"
+      >
+        <span class="material-symbols-outlined text-base">close</span>
+      </button>
+    </div>
+
+    <nav class="space-y-2" aria-label="Menu principal">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive
+          #rla="routerLinkActive"
+          class="flex items-center gap-3 rounded-lg border border-on-surface/10 px-4 py-3 font-label text-sm text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+          [class.bg-surface-container-high]="rla.isActive"
+          [class.text-on-surface]="rla.isActive"
+          (click)="closeSidebar()"
+        >
+          <span class="material-symbols-outlined text-base">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <div class="flex min-h-screen w-full flex-col md:pl-72">
+    <header class="sticky top-0 z-30 border-b border-on-surface/10 bg-surface-container-high/80 px-4 py-3 backdrop-blur-xl md:px-6">
+      <div class="mx-auto flex w-full max-w-7xl items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <button
+            class="rounded-full bg-surface-container p-2 text-on-surface-variant md:hidden"
+            type="button"
+            aria-label="Abrir menu"
+            (click)="toggleSidebar()"
+          >
+            <span class="material-symbols-outlined text-base">menu</span>
+          </button>
+          <span class="font-headline text-xl font-extrabold text-primary">TiendasGo</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 rounded-full border border-on-surface/10 bg-surface-container px-3 py-1.5">
+            <span class="material-symbols-outlined text-base text-on-surface-variant">account_circle</span>
+            <span class="font-label text-sm text-on-surface-variant">{{ userDisplayName() }}</span>
+          </div>
+
+          <button
+            type="button"
+            class="inline-flex items-center gap-1 rounded-full border border-on-surface/10 bg-surface-container px-3 py-1.5 font-label text-xs font-semibold uppercase tracking-wider text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+            aria-label="Cerrar sesion"
+            [disabled]="loggingOut()"
+            (click)="logout()"
+          >
+            <span class="material-symbols-outlined text-sm">logout</span>
+            <span>{{ loggingOut() ? 'Cerrando...' : 'Cerrar sesion' }}</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 bg-background p-4 md:p-6">
+      <div class="mx-auto w-full max-w-7xl">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+</div>

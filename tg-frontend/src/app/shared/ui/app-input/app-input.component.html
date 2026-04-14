@@ -1,0 +1,30 @@
+<div class="space-y-2">
+  @if (label().length > 0) {
+    <label class="block pl-1 font-label text-xs font-medium uppercase tracking-widest text-on-surface-variant">
+      {{ label() }}
+    </label>
+  }
+
+  <div class="group relative">
+    <div
+      class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-on-surface-variant transition-colors group-focus-within:text-primary"
+    >
+      <span class="material-symbols-outlined text-[20px]">{{ icon() }}</span>
+    </div>
+
+    <input
+      class="h-14 w-full rounded-lg border-none bg-surface-container-highest pl-12 pr-4 text-on-surface placeholder:text-on-surface-variant/40 transition-all duration-300 focus:bg-surface-bright focus:ring-0"
+      [attr.type]="type()"
+      [attr.placeholder]="placeholder()"
+      [attr.autocomplete]="autocomplete()"
+      [value]="value()"
+      [disabled]="isDisabled()"
+      (input)="handleInput($event)"
+      (blur)="handleBlur()"
+    />
+
+    <div
+      class="absolute bottom-0 left-0 h-[2px] w-0 rounded-full bg-primary transition-all duration-500 group-focus-within:w-full"
+    ></div>
+  </div>
+</div>

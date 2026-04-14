@@ -1,0 +1,12 @@
+<section class="space-y-6">
+  <a routerLink="/sedes" class="inline-flex items-center font-label text-sm font-semibold text-primary hover:underline">
+    Volver a sedes
+  </a>
+
+  <app-card>
+    <h1 class="font-headline text-2xl font-bold text-on-surface">Detalle de sede {{ sedeId }}</h1>
+    <p class="mt-2 font-body text-sm text-on-surface-variant">
+      Vista preparada para conectar GET /api/sedes/{{ '{' }}id{{ '}' }}.
+    </p>
+  </app-card>
+</section>
