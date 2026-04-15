@@ -1,5 +1,6 @@
 package com.tiendasgo.auth.services.impl;
 
+import com.tiendasgo.auth.dto.request.SedeRequest;
 import com.tiendasgo.auth.dto.response.SedeResponse;
 import com.tiendasgo.auth.domain.entity.Sede;
 import com.tiendasgo.auth.domain.repository.SedeRepository;
@@ -29,5 +30,47 @@ public class SedeServiceImpl implements ISedeService {
         Sede sede = sedeRepository.findById(idSede)
             .orElseThrow(() -> new CustomException("Sede no encontrada", HttpStatus.NOT_FOUND));
         return SedeMapper.toResponse(sede);
+    }
+
+    @Override
+    public SedeResponse crearSede(SedeRequest request) {
+        Sede sede = new Sede();
+        sede.setNombre(request.getNombre());
+        sede.setEmail(request.getEmail());
+        sede.setGerenteNombre(request.getGerenteNombre());
+        sede.setDireccion(request.getDireccion());
+        sede.setUbigeo(request.getUbigeo());
+        sede.setTelefono(request.getTelefono());
+        sede.setEsAlmacenCentral(request.getEsAlmacenCentral());
+        sede.setEstado(request.getEstado());
+        sede.setHorarioConfig(request.getHorarioConfig());
+
+        return SedeMapper.toResponse(sedeRepository.save(sede));
+    }
+
+    @Override
+    public SedeResponse actualizarSede(Integer idSede, SedeRequest request) {
+        Sede sede = sedeRepository.findById(idSede)
+            .orElseThrow(() -> new CustomException("Sede no encontrada", HttpStatus.NOT_FOUND));
+
+        sede.setNombre(request.getNombre());
+        sede.setEmail(request.getEmail());
+        sede.setGerenteNombre(request.getGerenteNombre());
+        sede.setDireccion(request.getDireccion());
+        sede.setUbigeo(request.getUbigeo());
+        sede.setTelefono(request.getTelefono());
+        sede.setEsAlmacenCentral(request.getEsAlmacenCentral());
+        sede.setEstado(request.getEstado());
+        sede.setHorarioConfig(request.getHorarioConfig());
+
+        return SedeMapper.toResponse(sedeRepository.save(sede));
+    }
+
+    @Override
+    public void eliminarSede(Integer idSede) {
+        if (!sedeRepository.existsById(idSede)) {
+            throw new CustomException("Sede no encontrada", HttpStatus.NOT_FOUND);
+        }
+        sedeRepository.deleteById(idSede);
     }
 }

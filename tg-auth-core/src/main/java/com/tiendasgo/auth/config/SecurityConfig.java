@@ -2,10 +2,12 @@ package com.tiendasgo.auth.config;
 
 import com.tiendasgo.auth.security.JwtAuthenticationFilter;
 import com.tiendasgo.auth.security.JwtEntryPoint;
+import com.tiendasgo.auth.utils.ApiPaths;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -50,7 +52,12 @@ public class SecurityConfig {
                         })
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, ApiPaths.API_AUTH + "/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, ApiPaths.API_AUTH + "/logout").authenticated()
+                        .requestMatchers(HttpMethod.GET, ApiPaths.API_SEDES, ApiPaths.API_SEDES + "/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, ApiPaths.API_SEDES).hasAnyRole("ADMIN", "ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, ApiPaths.API_SEDES + "/**").hasAnyRole("ADMIN", "ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, ApiPaths.API_SEDES + "/**").hasAnyRole("ADMIN", "ADMINISTRADOR")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 
 public class UserDetailsCustom implements UserDetails {
 
@@ -18,8 +19,12 @@ public class UserDetailsCustom implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        String nombreRol = usuario.getRol().getNombre() == null
+            ? ""
+            : usuario.getRol().getNombre().trim().toUpperCase(Locale.ROOT).replace(' ', '_');
+
         return Collections.singletonList(
-          new SimpleGrantedAuthority("ROLE_" + usuario.getRol().getNombre())
+          new SimpleGrantedAuthority("ROLE_" + nombreRol)
         );
     }
 

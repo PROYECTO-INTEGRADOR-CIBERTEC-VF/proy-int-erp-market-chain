@@ -31,7 +31,7 @@ public class Usuario {
     @Column(name = "id_usuario")
     private Integer idUsuario;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "id_rol", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

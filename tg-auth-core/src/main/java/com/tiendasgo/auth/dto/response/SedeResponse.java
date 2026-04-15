@@ -11,8 +11,13 @@ public class SedeResponse {
 
     private Integer idSede;
     private String nombre;
+    private String email;
+    private String gerenteNombre;
     private String direccion;
+    private String ubigeo;
     private String telefono;
+    private Boolean esAlmacenCentral;
     private Boolean estado;
+    private String horarioConfig;
 }
 

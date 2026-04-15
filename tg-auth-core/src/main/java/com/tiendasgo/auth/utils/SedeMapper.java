@@ -12,9 +12,14 @@ public final class SedeMapper {
         return new SedeResponse(
             sede.getIdSede(),
             sede.getNombre(),
+            sede.getEmail(),
+            sede.getGerenteNombre(),
             sede.getDireccion(),
+            sede.getUbigeo(),
             sede.getTelefono(),
-            sede.getEstado()
+            sede.getEsAlmacenCentral(),
+            sede.getEstado(),
+            sede.getHorarioConfig()
         );
     }
 }
