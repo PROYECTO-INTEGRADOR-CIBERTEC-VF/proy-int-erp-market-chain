@@ -23,7 +23,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class AppInputComponent implements ControlValueAccessor {
   readonly label = input('');
   readonly placeholder = input('');
-  readonly type = input<'text' | 'email' | 'password'>('text');
+  readonly type = input<'text' | 'email' | 'password' | 'tel'>('text');
   readonly icon = input('mail');
   readonly autocomplete = input('off');
 

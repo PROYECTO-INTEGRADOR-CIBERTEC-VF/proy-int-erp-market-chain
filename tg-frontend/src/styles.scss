@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap');
 @import 'tailwindcss';
+@plugin "daisyui";
 @config '../tailwind.config.js';
 
 :root {
@@ -29,4 +30,39 @@ body {
 
 .primary-gradient {
 	background: linear-gradient(135deg, #84adff 0%, #0070ea 100%);
+}
+
+.sidebar-scrollbar {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(173, 170, 170, 0.45) transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar {
+	width: 10px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+	background: transparent;
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+	border-radius: 9999px;
+	border: 2px solid transparent;
+	background-clip: padding-box;
+	background-color: rgba(173, 170, 170, 0.28);
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(173, 170, 170, 0.42);
+}
+
+.sidebar-scrollbar-hidden {
+	scrollbar-width: none;
+}
+
+.sidebar-scrollbar-hidden::-webkit-scrollbar {
+	width: 0;
+	height: 0;
 }

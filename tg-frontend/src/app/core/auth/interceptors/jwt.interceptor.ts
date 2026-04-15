@@ -11,16 +11,21 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = tokenStorage.getToken();
 
-  if (!token) {
-    return next(req);
-  }
-
   const isApiRequest = req.url.startsWith(environment.apiUrl);
   const isLoginRequest = req.url.includes('/api/auth/login');
   const isLogoutRequest = req.url.includes('/api/auth/logout');
+  const hasAuthorizationHeader = req.headers.has('Authorization');
+  const sessionAuthorization = token ? `Bearer ${token}` : '';
+
+  const shouldAttachSessionToken =
+    Boolean(token) &&
+    isApiRequest &&
+    !isLoginRequest &&
+    !isLogoutRequest &&
+    !hasAuthorizationHeader;
 
   const requestToHandle =
-    !isApiRequest || isLoginRequest
+    !shouldAttachSessionToken
       ? req
       : req.clone({
           setHeaders: {
@@ -30,12 +35,17 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(requestToHandle).pipe(
     catchError((error: unknown) => {
+      const requestAuthorization = requestToHandle.headers.get('Authorization') ?? '';
+      const usesSessionToken =
+        sessionAuthorization.length > 0 && requestAuthorization === sessionAuthorization;
+
       if (
         error instanceof HttpErrorResponse &&
         error.status === 401 &&
         isApiRequest &&
         !isLoginRequest &&
-        !isLogoutRequest
+        !isLogoutRequest &&
+        (!requestAuthorization || usesSessionToken)
       ) {
         authService.logout().subscribe();
       }

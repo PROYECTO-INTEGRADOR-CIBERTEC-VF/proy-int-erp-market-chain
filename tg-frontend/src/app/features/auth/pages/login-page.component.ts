@@ -1,6 +1,7 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../../../core/auth/services/auth.service';
@@ -11,7 +12,6 @@ import { AppInputComponent } from '../../../shared/ui/app-input/app-input.compon
 @Component({
   selector: 'app-login-page',
   imports: [
-    RouterLink,
     ReactiveFormsModule,
     AppButtonComponent,
     AppCardComponent,
@@ -56,9 +56,23 @@ export class LoginPageComponent {
         next: () => {
           void this.router.navigateByUrl('/sedes');
         },
-        error: () => {
-          this.errorMessage.set('No se pudo iniciar sesion. Verifica tus credenciales.');
+        error: (error: unknown) => {
+          this.errorMessage.set(this.resolveError(error));
         }
       });
+  }
+
+  private resolveError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 401) {
+        return 'Credenciales incorrectas.';
+      }
+
+      if (error.status === 403) {
+        return 'Tu usuario no tiene permisos para ingresar.';
+      }
+    }
+
+    return 'No se pudo iniciar sesion. Intenta nuevamente.';
   }
 }

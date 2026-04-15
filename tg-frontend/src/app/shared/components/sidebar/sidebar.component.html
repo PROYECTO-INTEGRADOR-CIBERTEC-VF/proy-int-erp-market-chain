@@ -1,0 +1,115 @@
+<aside
+  class="flex h-screen flex-col border-r border-white/10 bg-surface-container/95 text-on-surface shadow-[0_24px_60px_rgba(0,0,0,0.35)] transition-all duration-300"
+  [class.w-24]="isCollapsed()"
+  [class.w-72]="!isCollapsed()"
+  aria-label="Navegacion lateral"
+>
+  <div class="flex h-28 items-center border-b border-white/10 p-4" [style.paddingLeft]="'20px'">
+    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+      <lucide-icon [img]="icons.Building2" class="size-5"></lucide-icon>
+    </div>
+
+    @if (!isCollapsed()) {
+      <div class="min-w-0 pl-3">
+        <p class="truncate font-headline text-base font-extrabold tracking-wide text-on-surface">TiendasGo</p>
+        <p class="truncate text-xs font-medium uppercase tracking-[0.28em] text-on-surface-variant">
+          ERP operativo
+        </p>
+      </div>
+    }
+  </div>
+
+  <nav
+    class="sidebar-scrollbar sidebar-scrollbar-hidden flex-1 space-y-3 overflow-y-auto py-3"
+    [style.scrollbar-gutter]="'stable'"
+    aria-label="Menu principal"
+  >
+    @for (section of sections; track section.title) {
+      <details
+        class="collapse rounded-2xl border border-white/10 bg-surface-container-high/90 shadow-sm transition-[width] duration-300"
+        [style.marginLeft]="'20px'"
+        [style.width]="isCollapsed() ? '56px' : 'calc(100% - 40px)'"
+        open
+      >
+        <summary
+          class="collapse-title flex h-14 items-center p-0 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-on-surface-variant"
+          [attr.title]="section.title"
+          [attr.aria-label]="section.title"
+        >
+          <div class="flex h-full w-14 shrink-0 items-center justify-center">
+            <lucide-icon [img]="section.icon" class="size-4 text-primary"></lucide-icon>
+          </div>
+
+          @if (!isCollapsed()) {
+            <div class="min-w-0 flex-1">
+              <span class="truncate">{{ section.title }}</span>
+            </div>
+
+            <div class="flex h-full w-10 shrink-0 items-center justify-center pr-1">
+              <lucide-icon
+                [img]="icons.ChevronRight"
+                class="size-4 text-on-surface-variant transition-transform duration-300 group-open:rotate-90"
+              ></lucide-icon>
+            </div>
+          }
+        </summary>
+
+        <div class="collapse-content space-y-1 px-0 pb-3 pt-0">
+          @for (item of section.items; track item.label) {
+            @if (item.route) {
+              <a
+                [routerLink]="item.route"
+                routerLinkActive
+                #activeLink="routerLinkActive"
+                [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+                class="group flex h-10 items-center rounded-xl py-0 text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-on-surface"
+                [class.bg-primary/15]="activeLink.isActive"
+                [class.text-on-surface]="activeLink.isActive"
+                [class.shadow-[inset_0_0_0_1px_rgba(132,173,255,0.24)]]="activeLink.isActive"
+                [attr.aria-label]="item.label"
+              >
+                <div class="flex h-full w-14 shrink-0 items-center justify-center">
+                  <lucide-icon
+                    [img]="item.icon"
+                    class="size-4 text-on-surface-variant transition-colors group-hover:text-primary"
+                    [class.text-primary]="activeLink.isActive"
+                  ></lucide-icon>
+                </div>
+
+                @if (!isCollapsed()) {
+                  <span class="min-w-0 truncate pr-2">{{ item.label }}</span>
+                }
+              </a>
+            } @else {
+              <div
+                class="flex h-10 items-center rounded-xl py-0 text-sm font-medium text-on-surface-variant/75"
+                [attr.title]="item.label + ' - disponible pronto'"
+                [attr.aria-label]="item.label + ' - disponible pronto'"
+              >
+                <div class="flex h-full w-14 shrink-0 items-center justify-center">
+                  <lucide-icon [img]="item.icon" class="size-4"></lucide-icon>
+                </div>
+
+                @if (!isCollapsed()) {
+                  <span class="min-w-0 truncate pr-2">{{ item.label }}</span>
+                }
+              </div>
+            }
+          }
+        </div>
+      </details>
+    }
+  </nav>
+
+  <div class="flex justify-center border-t border-white/10 p-4">
+    <button
+      type="button"
+      class="btn btn-ghost btn-sm h-10 w-10 rounded-full border border-white/10 text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+      [attr.aria-label]="isCollapsed() ? 'Expandir sidebar' : 'Colapsar sidebar'"
+      [attr.title]="isCollapsed() ? 'Expandir sidebar' : 'Colapsar sidebar'"
+      (click)="toggleCollapsed()"
+    >
+      <lucide-icon [img]="isCollapsed() ? icons.ChevronRight : icons.ChevronLeft" class="size-4"></lucide-icon>
+    </button>
+  </div>
+</aside>

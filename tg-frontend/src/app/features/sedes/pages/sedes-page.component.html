@@ -1,26 +1,95 @@
 <section class="space-y-6">
-  <header class="space-y-2">
-    <h1 class="font-headline text-3xl font-extrabold text-on-surface">Sedes</h1>
-    <p class="font-body text-sm text-on-surface-variant">
-      Base visual lista para conectar el listado real desde la API.
-    </p>
+  <header class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div class="space-y-2">
+      <h1 class="font-headline text-3xl font-extrabold text-on-surface">Sedes</h1>
+      <p class="font-body text-sm text-on-surface-variant">
+        Gestiona el ciclo completo de sedes con tu backend JWT.
+      </p>
+    </div>
+
+    <a
+      routerLink="/sedes/nueva"
+      class="inline-flex items-center rounded-full border border-on-surface/10 bg-surface-container px-4 py-2 font-label text-sm font-semibold text-primary hover:bg-surface-container-high"
+    >
+      Nueva sede
+    </a>
   </header>
 
-  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-    @for (item of [1, 2, 3]; track item) {
-      <app-card>
-        <div class="space-y-3">
-          <div class="h-5 w-2/3 animate-pulse rounded bg-surface-container-high"></div>
-          <div class="h-4 w-full animate-pulse rounded bg-surface-container-highest"></div>
-          <div class="h-4 w-4/5 animate-pulse rounded bg-surface-container-highest"></div>
-          <a
-            [routerLink]="['/sedes', item]"
-            class="inline-flex items-center font-label text-sm font-semibold text-primary hover:underline"
-          >
-            Ver detalle
-          </a>
-        </div>
-      </app-card>
-    }
-  </div>
+  @if (errorMessage().length > 0) {
+    <p class="text-sm font-medium text-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      @for (item of [1, 2, 3]; track item) {
+        <app-card>
+          <div class="space-y-3">
+            <div class="h-5 w-2/3 animate-pulse rounded bg-surface-container-high"></div>
+            <div class="h-4 w-full animate-pulse rounded bg-surface-container-highest"></div>
+            <div class="h-4 w-4/5 animate-pulse rounded bg-surface-container-highest"></div>
+          </div>
+        </app-card>
+      }
+    </div>
+  } @else {
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      @for (sede of sedes(); track sede.idSede) {
+        <app-card>
+          <div class="space-y-3">
+            <h2 class="font-headline text-xl font-bold text-on-surface">{{ displayEmpty(sede.nombre) }}</h2>
+
+            <div class="space-y-1 text-sm text-on-surface-variant">
+              <p><span class="font-semibold text-on-surface">Email:</span> {{ displayEmpty(sede.email) }}</p>
+              <p>
+                <span class="font-semibold text-on-surface">Gerente:</span>
+                {{ displayEmpty(sede.gerenteNombre) }}
+              </p>
+              <p>
+                <span class="font-semibold text-on-surface">Direccion:</span>
+                {{ displayEmpty(sede.direccion) }}
+              </p>
+              <p><span class="font-semibold text-on-surface">Ubigeo:</span> {{ displayEmpty(sede.ubigeo) }}</p>
+              <p>
+                <span class="font-semibold text-on-surface">Telefono:</span>
+                {{ displayEmpty(sede.telefono) }}
+              </p>
+              <p>
+                <span class="font-semibold text-on-surface">Almacen central:</span>
+                {{ formatAlmacenCentral(sede.esAlmacenCentral) }}
+              </p>
+              <p><span class="font-semibold text-on-surface">Estado:</span> {{ formatEstado(sede.estado) }}</p>
+            </div>
+
+            <div class="flex items-center gap-3 pt-2 text-sm font-semibold">
+              <a [routerLink]="['/sedes/detalle', sede.idSede]" class="text-primary hover:underline">Detalle</a>
+              <a [routerLink]="['/sedes/editar', sede.idSede]" class="text-secondary hover:underline">Editar</a>
+              <button
+                type="button"
+                class="text-error hover:underline"
+                [disabled]="deletingId() === sede.idSede"
+                (click)="requestDeleteSede(sede.idSede)"
+              >
+                {{ deletingId() === sede.idSede ? 'Eliminando...' : 'Eliminar' }}
+              </button>
+            </div>
+          </div>
+        </app-card>
+      } @empty {
+        <app-card>
+          <p class="text-sm text-on-surface-variant">No hay sedes registradas.</p>
+        </app-card>
+      }
+    </div>
+  }
 </section>
+
+<app-admin-approval-modal
+  [visible]="approvalOpen()"
+  [title]="'Aprobacion para eliminar sede'"
+  [message]="'Para eliminar una sede debes validar credenciales de administrador.'"
+  [confirmLabel]="'Aprobar y eliminar'"
+  [loading]="approvalLoading()"
+  [errorMessage]="approvalError()"
+  (approved)="approveDelete($event)"
+  (cancelled)="closeApprovalModal()"
+/>

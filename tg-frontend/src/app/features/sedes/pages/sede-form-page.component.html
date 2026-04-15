@@ -1,0 +1,241 @@
+<section class="mx-auto w-full max-w-5xl space-y-6 px-2 md:px-4">
+  <a
+    routerLink="/sedes"
+    class="inline-flex items-center font-label text-sm font-semibold text-primary hover:underline"
+  >
+    Volver a sedes
+  </a>
+
+  <app-card class="mx-auto block w-full max-w-4xl">
+    <h1 class="font-headline text-2xl font-bold text-on-surface">
+      {{ isEditMode() ? 'Editar sede' : 'Nueva sede' }}
+    </h1>
+
+    @if (errorMessage().length > 0) {
+      <p class="mt-3 text-sm font-medium text-error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    @if (loading()) {
+      <p class="mt-3 text-sm text-on-surface-variant">Cargando datos de la sede...</p>
+    } @else {
+      <form class="mt-6 space-y-4" [formGroup]="form" (ngSubmit)="submit()">
+        <app-input
+          formControlName="nombre"
+          label="Nombre"
+          placeholder="Sede Central"
+          icon="store"
+          autocomplete="organization"
+        />
+
+        <app-input
+          formControlName="email"
+          label="Email"
+          placeholder="sede@tiendasgo.com"
+          type="email"
+          icon="mail"
+          autocomplete="email"
+        />
+
+        <app-input
+          formControlName="gerenteNombre"
+          label="Gerente"
+          placeholder="Nombre del gerente"
+          icon="person"
+          autocomplete="name"
+        />
+
+        <app-input
+          formControlName="direccion"
+          label="Direccion"
+          placeholder="Av. Principal 123"
+          icon="location_on"
+          autocomplete="street-address"
+        />
+
+        <div class="space-y-2">
+          <label class="block pl-1 font-label text-xs font-medium uppercase tracking-widest text-on-surface-variant">
+            Distrito (Lima)
+          </label>
+
+          <select
+            formControlName="ubigeo"
+            class="h-14 w-full rounded-full border border-on-surface/15 bg-surface-container-highest px-4 text-sm text-on-surface transition-all duration-300 focus:border-primary/60 focus:bg-surface-bright focus:outline-none focus:ring-2 focus:ring-primary/20"
+          >
+            <option value="">Seleccionar distrito</option>
+            @for (district of districtOptions; track district.ubigeo) {
+              <option [value]="district.ubigeo">{{ district.nombre }} ({{ district.ubigeo }})</option>
+            }
+          </select>
+
+          @if (form.controls.ubigeo.touched && form.controls.ubigeo.invalid) {
+            <p class="pl-1 text-xs font-medium text-error">Selecciona un distrito valido de Lima.</p>
+          }
+        </div>
+
+        <app-input
+          formControlName="telefono"
+          label="Telefono"
+          placeholder="999888777"
+          icon="phone"
+          autocomplete="tel"
+        />
+
+        <div class="space-y-2">
+          <label class="block pl-1 font-label text-xs font-medium uppercase tracking-widest text-on-surface-variant">
+            Horario
+          </label>
+
+          <div formGroupName="horario" class="space-y-3">
+            <div class="rounded-2xl border border-on-surface/15 bg-surface-container-highest p-3">
+              <div class="grid grid-cols-4 gap-2 sm:grid-cols-7">
+                @for (day of weekDays; track day.key) {
+                  <button
+                    type="button"
+                    class="h-10 rounded-xl border border-on-surface/15 text-xs font-semibold transition-all"
+                    [class.bg-primary]="isSelectedDay(day.key)"
+                    [class.text-on-primary-fixed]="isSelectedDay(day.key)"
+                    [class.text-on-surface-variant]="!isSelectedDay(day.key)"
+                    [class.bg-surface-bright]="!isSelectedDay(day.key)"
+                    (click)="selectDay(day.key)"
+                  >
+                    {{ day.shortLabel }}
+                  </button>
+                }
+              </div>
+
+              <div class="mt-4">
+                @for (day of weekDays; track day.key) {
+                  @if (isSelectedDay(day.key)) {
+                    <div [formGroupName]="day.key" class="rounded-2xl border border-on-surface/15 bg-surface-bright p-3">
+                      <div class="flex items-center justify-between gap-3">
+                        <p class="font-label text-sm font-semibold text-on-surface">{{ day.label }}</p>
+                        <button
+                          type="button"
+                          class="rounded-full border border-on-surface/15 px-3 py-1 text-xs font-semibold text-on-surface-variant hover:bg-surface-container"
+                          (click)="toggleDayClosed(day.key)"
+                        >
+                          {{ isDayClosed(day.key) ? 'Cerrado' : 'Abierto' }}
+                        </button>
+                      </div>
+
+                      <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div class="space-y-1">
+                          <label class="pl-1 text-xs font-medium uppercase tracking-widest text-on-surface-variant">Apertura</label>
+                          <input
+                            type="time"
+                            formControlName="apertura"
+                            class="h-11 w-full rounded-xl border border-on-surface/15 bg-surface-container-highest px-3 text-sm text-on-surface focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            [disabled]="isDayClosed(day.key)"
+                          />
+                        </div>
+
+                        <div class="space-y-1">
+                          <label class="pl-1 text-xs font-medium uppercase tracking-widest text-on-surface-variant">Cierre</label>
+                          <input
+                            type="time"
+                            formControlName="cierre"
+                            class="h-11 w-full rounded-xl border border-on-surface/15 bg-surface-container-highest px-3 text-sm text-on-surface focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            [disabled]="isDayClosed(day.key)"
+                          />
+                        </div>
+                      </div>
+
+                      @if (dayHasError(day.key)) {
+                        <p class="mt-2 pl-1 text-xs font-medium text-error">
+                          Si el dia esta abierto, define apertura y cierre validos (apertura menor que cierre).
+                        </p>
+                      }
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block pl-1 font-label text-xs font-medium uppercase tracking-widest text-on-surface-variant">
+            Almacen central
+          </label>
+
+          <div class="grid grid-cols-2 gap-2 rounded-full border border-on-surface/15 bg-surface-container-highest p-1">
+            <button
+              type="button"
+              class="h-12 rounded-full px-4 font-label text-sm font-semibold transition-all duration-200"
+              [class.bg-primary]="form.controls.esAlmacenCentral.value === true"
+              [class.text-on-primary-fixed]="form.controls.esAlmacenCentral.value === true"
+              [class.shadow-lg]="form.controls.esAlmacenCentral.value === true"
+              [class.shadow-primary/20]="form.controls.esAlmacenCentral.value === true"
+              [class.text-on-surface-variant]="form.controls.esAlmacenCentral.value !== true"
+              (click)="form.controls.esAlmacenCentral.setValue(true)"
+            >
+              Si
+            </button>
+
+            <button
+              type="button"
+              class="h-12 rounded-full px-4 font-label text-sm font-semibold transition-all duration-200"
+              [class.bg-primary]="form.controls.esAlmacenCentral.value === false"
+              [class.text-on-primary-fixed]="form.controls.esAlmacenCentral.value === false"
+              [class.shadow-lg]="form.controls.esAlmacenCentral.value === false"
+              [class.shadow-primary/20]="form.controls.esAlmacenCentral.value === false"
+              [class.text-on-surface-variant]="form.controls.esAlmacenCentral.value !== false"
+              (click)="form.controls.esAlmacenCentral.setValue(false)"
+            >
+              No
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block pl-1 font-label text-xs font-medium uppercase tracking-widest text-on-surface-variant">
+            Estado
+          </label>
+
+          <div class="grid grid-cols-2 gap-2 rounded-full border border-on-surface/15 bg-surface-container-highest p-1">
+            <button
+              type="button"
+              class="h-12 rounded-full px-4 font-label text-sm font-semibold transition-all duration-200"
+              [class.bg-primary]="form.controls.estado.value === true"
+              [class.text-on-primary-fixed]="form.controls.estado.value === true"
+              [class.shadow-lg]="form.controls.estado.value === true"
+              [class.shadow-primary/20]="form.controls.estado.value === true"
+              [class.text-on-surface-variant]="form.controls.estado.value !== true"
+              (click)="form.controls.estado.setValue(true)"
+            >
+              Activo
+            </button>
+
+            <button
+              type="button"
+              class="h-12 rounded-full px-4 font-label text-sm font-semibold transition-all duration-200"
+              [class.bg-primary]="form.controls.estado.value === false"
+              [class.text-on-primary-fixed]="form.controls.estado.value === false"
+              [class.shadow-lg]="form.controls.estado.value === false"
+              [class.shadow-primary/20]="form.controls.estado.value === false"
+              [class.text-on-surface-variant]="form.controls.estado.value !== false"
+              (click)="form.controls.estado.setValue(false)"
+            >
+              Inactivo
+            </button>
+          </div>
+        </div>
+
+        <app-button type="submit" [disabled]="saving()">
+          <span>{{ saving() ? 'Guardando...' : 'Guardar sede' }}</span>
+        </app-button>
+      </form>
+    }
+  </app-card>
+</section>
+
+<app-admin-approval-modal
+  [visible]="approvalOpen()"
+  [title]="isEditMode() ? 'Aprobacion para editar sede' : 'Aprobacion para crear sede'"
+  [message]="'Para guardar cambios debes validar credenciales de administrador.'"
+  [confirmLabel]="isEditMode() ? 'Aprobar y editar' : 'Aprobar y crear'"
+  [loading]="approvalLoading()"
+  [errorMessage]="approvalError()"
+  (approved)="approveAndSave($event)"
+  (cancelled)="closeApprovalModal()"
+/>

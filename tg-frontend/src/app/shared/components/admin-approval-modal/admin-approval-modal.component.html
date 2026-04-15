@@ -1,0 +1,50 @@
+@if (visible()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true">
+    <app-card class="w-full max-w-md">
+      <div class="space-y-2">
+        <h2 class="font-headline text-2xl font-bold text-on-surface">{{ title() }}</h2>
+        <p class="text-sm text-on-surface-variant">{{ message() }}</p>
+      </div>
+
+      <form class="mt-5 space-y-4" [formGroup]="form" (ngSubmit)="submit()">
+        <app-input
+          formControlName="email"
+          label="Usuario admin"
+          placeholder="admin@empresa.com"
+          icon="person"
+          autocomplete="username"
+        />
+
+        <app-input
+          formControlName="password"
+          label="Contrasena admin"
+          placeholder="••••••••"
+          type="password"
+          icon="lock"
+          autocomplete="current-password"
+        />
+
+        @if (errorMessage().length > 0) {
+          <p class="text-sm font-medium text-error" role="alert">{{ errorMessage() }}</p>
+        }
+
+        <div class="flex gap-3">
+          <button
+            type="button"
+            class="h-12 w-1/2 rounded-xl border border-on-surface/15 bg-surface-container-high font-label text-sm font-semibold text-on-surface-variant hover:bg-surface-container"
+            [disabled]="loading()"
+            (click)="onCancel()"
+          >
+            Cancelar
+          </button>
+
+          <div class="w-1/2">
+            <app-button type="submit" [disabled]="loading()">
+              {{ loading() ? 'Validando...' : confirmLabel() }}
+            </app-button>
+          </div>
+        </div>
+      </form>
+    </app-card>
+  </div>
+}
