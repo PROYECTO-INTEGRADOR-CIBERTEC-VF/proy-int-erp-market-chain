@@ -23,6 +23,8 @@ public class UserDetailsCustom implements UserDetails {
             ? ""
             : usuario.getRol().getNombre().trim().toUpperCase(Locale.ROOT).replace(' ', '_');
 
+        // Spring Security evalua hasRole("ADMIN") contra autoridades con formato ROLE_ADMIN.
+        // Si en el futuro agregas nuevos roles en auth.roles, esta normalizacion los hace compatibles.
         return Collections.singletonList(
           new SimpleGrantedAuthority("ROLE_" + nombreRol)
         );

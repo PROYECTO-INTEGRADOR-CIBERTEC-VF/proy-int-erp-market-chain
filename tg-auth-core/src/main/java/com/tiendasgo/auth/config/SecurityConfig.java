@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -54,10 +56,28 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, ApiPaths.API_AUTH + "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, ApiPaths.API_AUTH + "/logout").authenticated()
-                        .requestMatchers(HttpMethod.GET, ApiPaths.API_SEDES, ApiPaths.API_SEDES + "/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, ApiPaths.API_SEDES).hasAnyRole("ADMIN", "ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.PUT, ApiPaths.API_SEDES + "/**").hasAnyRole("ADMIN", "ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.DELETE, ApiPaths.API_SEDES + "/**").hasAnyRole("ADMIN", "ADMINISTRADOR")
+
+                        // Sedes: solo ADMIN (incluye endpoints de lectura).
+                        .requestMatchers(HttpMethod.GET, ApiPaths.API_SEDES, ApiPaths.API_SEDES + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, ApiPaths.API_SEDES).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, ApiPaths.API_SEDES + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, ApiPaths.API_SEDES + "/**").hasRole("ADMIN")
+
+                        // Catalog: solo ADMIN en todas las operaciones (incluye GET).
+                        .requestMatchers(HttpMethod.GET, ApiPaths.API_CATALOG, ApiPaths.API_CATALOG + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, ApiPaths.API_CATALOG, ApiPaths.API_CATALOG + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, ApiPaths.API_CATALOG, ApiPaths.API_CATALOG + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, ApiPaths.API_CATALOG, ApiPaths.API_CATALOG + "/**").hasRole("ADMIN")
+
+                        // Purchases: solo ADMIN en todas las operaciones (incluye GET).
+                        .requestMatchers(HttpMethod.GET, ApiPaths.API_PURCHASES, ApiPaths.API_PURCHASES + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, ApiPaths.API_PURCHASES, ApiPaths.API_PURCHASES + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, ApiPaths.API_PURCHASES, ApiPaths.API_PURCHASES + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, ApiPaths.API_PURCHASES, ApiPaths.API_PURCHASES + "/**").hasRole("ADMIN")
+
+                        // Ejemplos para escalar RBAC en el futuro:
+                        // .requestMatchers(HttpMethod.GET, ApiPaths.API_CATALOG + "/stock/**").hasAnyRole("ADMIN", "ALMACENERO")
+                        // .requestMatchers(HttpMethod.POST, ApiPaths.API_PURCHASES + "/ventas/**").hasAnyRole("ADMIN", "VENDEDOR")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

@@ -4,13 +4,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -31,7 +34,11 @@ public class JwtProvider {
 
     // 2. Generar el Token (Se usará en el AuthServiceImpl)
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", extractRoles(userDetails.getAuthorities()));
+        // Si luego necesitas filtros cross-microservicio (por ejemplo id_sede o id_usuario),
+        // agrega esos claims aqui para que viajen dentro del JWT desde el login.
+        return generateToken(claims, userDetails);
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -42,6 +49,14 @@ public class JwtProvider {
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey())
                 .compact();
+    }
+
+    private List<String> extractRoles(Collection<? extends GrantedAuthority> authorities) {
+        return authorities.stream()
+            .map(GrantedAuthority::getAuthority)
+            .map(authority -> authority.startsWith("ROLE_") ? authority.substring(5) : authority)
+            .distinct()
+            .toList();
     }
 
     // 3. Validar si el token es legítimo y del usuario correcto

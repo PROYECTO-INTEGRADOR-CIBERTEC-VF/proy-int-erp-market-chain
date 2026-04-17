@@ -1,6 +1,7 @@
 package com.tiendasgo.auth.controllers;
 
 import com.tiendasgo.auth.dto.request.SedeRequest;
+import com.tiendasgo.auth.dto.response.ApiResponse;
 import com.tiendasgo.auth.dto.response.SedeResponse;
 import com.tiendasgo.auth.services.ISedeService;
 import com.tiendasgo.auth.utils.ApiPaths;
@@ -9,6 +10,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,29 +28,32 @@ public class SedeController {
     private final ISedeService sedeService;
 
     @GetMapping
-    public ResponseEntity<List<SedeResponse>> listarSedes() {
-        return ResponseEntity.ok(sedeService.listarSedes());
+    public ResponseEntity<ApiResponse<List<SedeResponse>>> listarSedes() {
+        return ResponseEntity.ok(ApiResponse.success("Sedes obtenidas correctamente", sedeService.listarSedes()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SedeResponse> obtenerSede(@PathVariable("id") Integer idSede) {
-        return ResponseEntity.ok(sedeService.obtenerSedePorId(idSede));
+    public ResponseEntity<ApiResponse<SedeResponse>> obtenerSede(@PathVariable("id") Integer idSede) {
+        return ResponseEntity.ok(ApiResponse.success("Sede obtenida correctamente", sedeService.obtenerSedePorId(idSede)));
     }
 
     @PostMapping
-    public ResponseEntity<SedeResponse> crearSede(@Valid @RequestBody SedeRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(sedeService.crearSede(request));
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<SedeResponse>> crearSede(@Valid @RequestBody SedeRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(ApiResponse.success("Sede creada correctamente", sedeService.crearSede(request)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SedeResponse> actualizarSede(
+    public ResponseEntity<ApiResponse<SedeResponse>> actualizarSede(
         @PathVariable("id") Integer idSede,
         @Valid @RequestBody SedeRequest request
     ) {
-        return ResponseEntity.ok(sedeService.actualizarSede(idSede, request));
+        return ResponseEntity.ok(ApiResponse.success("Sede actualizada correctamente", sedeService.actualizarSede(idSede, request)));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminarSede(@PathVariable("id") Integer idSede) {
         sedeService.eliminarSede(idSede);
         return ResponseEntity.noContent().build();

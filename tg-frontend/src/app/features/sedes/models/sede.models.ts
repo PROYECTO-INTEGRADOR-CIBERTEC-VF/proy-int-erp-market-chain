@@ -7,7 +7,7 @@ export interface SedeRequest {
   telefono: string;
   esAlmacenCentral: boolean;
   estado: boolean;
-  horarioConfig: string;
+  horarioConfig: Record<string, unknown>;
 }
 
 export interface SedeResponse {

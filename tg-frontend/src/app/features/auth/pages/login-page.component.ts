@@ -54,7 +54,7 @@ export class LoginPageComponent {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: () => {
-          void this.router.navigateByUrl('/sedes');
+          void this.router.navigateByUrl('/dashboard');
         },
         error: (error: unknown) => {
           this.errorMessage.set(this.resolveError(error));

@@ -61,7 +61,7 @@ export class SidebarComponent {
         {
           label: 'Sedes',
           icon: Store,
-          route: '/sedes'
+          route: '/dashboard/sedes'
         },
         {
           label: 'Usuarios',
@@ -92,7 +92,7 @@ export class SidebarComponent {
         {
           label: 'Productos',
           icon: Package,
-          route: '/inventario'
+          route: '/dashboard/inventario'
         },
         {
           label: 'Categorias',
@@ -123,7 +123,7 @@ export class SidebarComponent {
         {
           label: 'Compras',
           icon: ShoppingCart,
-          route: '/compras'
+          route: '/dashboard/compras'
         },
         {
           label: 'Encabezado',

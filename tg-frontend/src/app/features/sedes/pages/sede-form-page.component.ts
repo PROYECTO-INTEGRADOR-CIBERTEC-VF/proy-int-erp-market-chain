@@ -113,9 +113,9 @@ export class SedeFormPageComponent {
   private readonly sedesService = inject(SedesService);
   private readonly authService = inject(AuthService);
 
-  private readonly routeId = Number(this.route.snapshot.paramMap.get('id'));
+  private readonly routeId = this.parseRouteId(this.route.snapshot.paramMap.get('id'));
 
-  protected readonly isEditMode = signal(Number.isFinite(this.routeId));
+  protected readonly isEditMode = signal(this.routeId !== null);
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
   protected readonly approvalOpen = signal(false);
@@ -128,7 +128,7 @@ export class SedeFormPageComponent {
   protected readonly selectedDayKey = signal<string>('lunes');
 
   protected readonly form = this.formBuilder.group({
-    nombre: ['', [Validators.required, Validators.maxLength(120)]],
+    nombre: ['', [Validators.required, Validators.maxLength(100)]],
     email: ['', [Validators.email, Validators.maxLength(100)]],
     gerenteNombre: ['', [Validators.maxLength(100)]],
     direccion: ['', [Validators.maxLength(255)]],
@@ -163,7 +163,7 @@ export class SedeFormPageComponent {
     }
 
     const raw = this.form.getRawValue();
-    const horarioConfig = this.buildHorarioConfigJson();
+    const horarioConfig = this.buildHorarioConfig();
 
     if (!horarioConfig) {
       return;
@@ -223,7 +223,7 @@ export class SedeFormPageComponent {
     this.saving.set(true);
     this.errorMessage.set('');
 
-    const request$ = this.isEditMode()
+    const request$ = this.isEditMode() && this.routeId !== null
       ? this.sedesService.update(this.routeId, payload, adminToken)
       : this.sedesService.create(payload, adminToken);
 
@@ -234,13 +234,13 @@ export class SedeFormPageComponent {
       this.pendingPayload.set(null);
     })).subscribe({
       next: (sede) => {
-        const targetId = sede.idSede > 0 ? sede.idSede : this.routeId;
+        const targetId = sede.idSede > 0 ? sede.idSede : (this.routeId ?? 0);
         if (targetId > 0) {
-          void this.router.navigate(['/sedes/detalle', targetId]);
+          void this.router.navigate(['/dashboard/sedes/detalle', targetId]);
           return;
         }
 
-        void this.router.navigate(['/sedes']);
+        void this.router.navigate(['/dashboard/sedes']);
       },
       error: (error: unknown) => {
         this.errorMessage.set(this.resolveError(error));
@@ -249,6 +249,11 @@ export class SedeFormPageComponent {
   }
 
   private loadSede(): void {
+    if (this.routeId === null) {
+      this.errorMessage.set('No se encontro un id de sede valido para editar.');
+      return;
+    }
+
     this.loading.set(true);
 
     this.sedesService
@@ -277,6 +282,10 @@ export class SedeFormPageComponent {
 
   private resolveError(error: unknown): string {
     if (error instanceof HttpErrorResponse) {
+      if (error.status === 400) {
+        return this.resolveBackendValidationMessage(error);
+      }
+
       if (error.status === 401) {
         return 'Tu sesion expiro. Inicia sesion nuevamente.';
       }
@@ -287,6 +296,18 @@ export class SedeFormPageComponent {
     }
 
     return 'No se pudo completar la operacion de sedes.';
+  }
+
+  private resolveBackendValidationMessage(error: HttpErrorResponse): string {
+    const body = error.error;
+    if (body && typeof body === 'object') {
+      const message = (body as Record<string, unknown>)['message'];
+      if (typeof message === 'string' && message.trim().length > 0) {
+        return message;
+      }
+    }
+
+    return 'Datos de sede invalidos. Revisa los campos e intenta nuevamente.';
   }
 
   private normalizeEstado(value: unknown): boolean {
@@ -382,7 +403,7 @@ export class SedeFormPageComponent {
     return group instanceof FormGroup ? group : null;
   }
 
-  private buildHorarioConfigJson(): string | null {
+  private buildHorarioConfig(): Record<string, DaySchedule> | null {
     const horario: Record<string, DaySchedule> = {};
 
     for (const day of WEEK_DAYS) {
@@ -407,13 +428,7 @@ export class SedeFormPageComponent {
       };
     }
 
-    const serialized = JSON.stringify(horario);
-    if (serialized.length > 500) {
-      this.errorMessage.set('El horario configurado excede el limite permitido.');
-      return null;
-    }
-
-    return serialized;
+    return horario;
   }
 
   private patchHorarioFromConfig(config: string): void {
@@ -520,5 +535,14 @@ export class SedeFormPageComponent {
     }
 
     return 'No se pudo validar la aprobacion de administrador.';
+  }
+
+  private parseRouteId(value: string | null): number | null {
+    if (!value) {
+      return null;
+    }
+
+    const parsed = Number(value);
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
   }
 }

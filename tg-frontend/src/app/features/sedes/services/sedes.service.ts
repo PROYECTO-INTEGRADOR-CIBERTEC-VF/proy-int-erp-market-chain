@@ -99,7 +99,7 @@ export class SedesService {
         source['esAlmacenCentral'] ?? source['es_almacen_central']
       ),
       estado: this.toBoolean(source['estado']),
-      horarioConfig: this.toString(source['horarioConfig'] ?? source['horario_config'])
+      horarioConfig: this.toHorarioConfigString(source['horarioConfig'] ?? source['horario_config'])
     };
   }
 
@@ -113,8 +113,24 @@ export class SedesService {
       telefono: this.toNullableString(payload.telefono),
       esAlmacenCentral: payload.esAlmacenCentral,
       estado: payload.estado,
-      horarioConfig: this.toNullableString(payload.horarioConfig)
+      horarioConfig: payload.horarioConfig
     };
+  }
+
+  private toHorarioConfigString(value: unknown): string {
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    if (value && typeof value === 'object') {
+      try {
+        return JSON.stringify(value);
+      } catch {
+        return '';
+      }
+    }
+
+    return '';
   }
 
   private toString(value: unknown): string {

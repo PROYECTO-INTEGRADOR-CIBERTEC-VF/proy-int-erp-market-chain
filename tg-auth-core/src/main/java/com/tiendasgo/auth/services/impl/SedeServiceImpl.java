@@ -35,15 +35,7 @@ public class SedeServiceImpl implements ISedeService {
     @Override
     public SedeResponse crearSede(SedeRequest request) {
         Sede sede = new Sede();
-        sede.setNombre(request.getNombre());
-        sede.setEmail(request.getEmail());
-        sede.setGerenteNombre(request.getGerenteNombre());
-        sede.setDireccion(request.getDireccion());
-        sede.setUbigeo(request.getUbigeo());
-        sede.setTelefono(request.getTelefono());
-        sede.setEsAlmacenCentral(request.getEsAlmacenCentral());
-        sede.setEstado(request.getEstado());
-        sede.setHorarioConfig(request.getHorarioConfig());
+        aplicarDatosRequest(sede, request);
 
         return SedeMapper.toResponse(sedeRepository.save(sede));
     }
@@ -53,17 +45,27 @@ public class SedeServiceImpl implements ISedeService {
         Sede sede = sedeRepository.findById(idSede)
             .orElseThrow(() -> new CustomException("Sede no encontrada", HttpStatus.NOT_FOUND));
 
-        sede.setNombre(request.getNombre());
-        sede.setEmail(request.getEmail());
-        sede.setGerenteNombre(request.getGerenteNombre());
-        sede.setDireccion(request.getDireccion());
-        sede.setUbigeo(request.getUbigeo());
-        sede.setTelefono(request.getTelefono());
-        sede.setEsAlmacenCentral(request.getEsAlmacenCentral());
-        sede.setEstado(request.getEstado());
-        sede.setHorarioConfig(request.getHorarioConfig());
+        aplicarDatosRequest(sede, request);
 
         return SedeMapper.toResponse(sedeRepository.save(sede));
+    }
+
+    private void aplicarDatosRequest(Sede sede, SedeRequest request) {
+        sede.setNombre(normalizeText(request.getNombre()));
+        sede.setEmail(normalizeText(request.getEmail()));
+        sede.setGerenteNombre(normalizeText(request.getGerenteNombre()));
+        sede.setDireccion(normalizeText(request.getDireccion()));
+        sede.setUbigeo(normalizeText(request.getUbigeo()));
+        sede.setTelefono(normalizeText(request.getTelefono()));
+        sede.setEsAlmacenCentral(request.getEsAlmacenCentral() != null
+            ? request.getEsAlmacenCentral()
+            : Boolean.FALSE);
+        sede.setEstado(request.getEstado() != null ? request.getEstado() : Boolean.TRUE);
+        sede.setHorarioConfig(normalizeText(request.getHorarioConfig()));
+    }
+
+    private String normalizeText(String value) {
+        return value == null ? null : value.trim();
     }
 
     @Override

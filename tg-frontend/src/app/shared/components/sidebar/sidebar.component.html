@@ -1,5 +1,5 @@
 <aside
-  class="flex h-screen flex-col border-r border-white/10 bg-surface-container/95 text-on-surface shadow-[0_24px_60px_rgba(0,0,0,0.35)] transition-all duration-300"
+  class="sticky top-0 flex h-dvh min-h-dvh flex-col border-r border-white/10 bg-surface-container/95 text-on-surface shadow-[0_24px_60px_rgba(0,0,0,0.35)] transition-all duration-300"
   [class.w-24]="isCollapsed()"
   [class.w-72]="!isCollapsed()"
   aria-label="Navegacion lateral"
@@ -15,6 +15,9 @@
         <p class="truncate text-xs font-medium uppercase tracking-[0.28em] text-on-surface-variant">
           ERP operativo
         </p>
+        <a routerLink="/dashboard" class="mt-1 inline-block text-xs text-on-surface-variant hover:text-on-surface">
+        Ir a dashboard
+        </a>
       </div>
     }
   </div>

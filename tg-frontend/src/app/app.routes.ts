@@ -6,7 +6,7 @@ export const routes: Routes = [
 	{
 		path: '',
 		pathMatch: 'full',
-		redirectTo: 'login'
+		redirectTo: 'dashboard'
 	},
 	{
 		path: 'login',
@@ -16,7 +16,7 @@ export const routes: Routes = [
 			)
 	},
 	{
-		path: '',
+		path: 'dashboard',
 		canActivate: [authGuard],
 		canActivateChild: [authChildGuard],
 		loadComponent: () =>
