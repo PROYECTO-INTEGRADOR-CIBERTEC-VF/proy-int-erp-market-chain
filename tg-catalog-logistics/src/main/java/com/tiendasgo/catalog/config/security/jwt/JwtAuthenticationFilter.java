@@ -27,17 +27,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String token = getJwtFromRequest(request);
+
         if (StringUtils.hasText(token)) {
             try {
                 Claims claims = jwtProvider.validateTokenAndGetClaims(token);
                 String email = claims.getSubject();
-                List<String> roles = jwtProvider.getRoles(token);
-                var authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
+               List<String> roles = jwtProvider.getRoles(token);
+
+               var authorities = roles.stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .collect(Collectors.toList());
+
                 var authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception ignored) {
-                // Token inválido, no establecer autenticación
             }
         }
         filterChain.doFilter(request, response);
