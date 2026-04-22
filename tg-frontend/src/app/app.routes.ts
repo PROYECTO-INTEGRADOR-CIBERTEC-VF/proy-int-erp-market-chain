@@ -40,11 +40,26 @@ export const routes: Routes = [
 				redirectTo: 'administracion/usuarios'
 			},
 			{
-				path: 'logistica/inventario',
-				loadChildren: () =>
-					import('./features/inventario/inventario.routes').then(
-						(m) => m.INVENTARIO_ROUTES
-					)
+				path: 'logistica',
+				canActivate: [authGuard],
+				canActivateChild: [authChildGuard],
+				children: [
+					{
+						path: 'marcas',
+						loadChildren: () =>
+							import('./features/logistica/marcas.routes').then((m) => m.MARCAS_ROUTES)
+					},
+					{
+						path: 'categorias',
+						loadChildren: () =>
+							import('./features/logistica/categorias.routes').then((m) => m.CATEGORIAS_ROUTES)
+					},
+					{
+						path: 'sub-categorias',
+						loadChildren: () =>
+							import('./features/logistica/sub-categorias.routes').then((m) => m.SUBCATEGORIAS_ROUTES)
+					}
+				]
 			},
 			{
 				path: 'compras/compras',

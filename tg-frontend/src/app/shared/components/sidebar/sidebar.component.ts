@@ -92,16 +92,23 @@ export class SidebarComponent {
       items: [
         {
           label: 'Productos',
-          icon: Package,
-          route: '/dashboard/logistica/inventario'
+          icon: Package
+          // route: '/dashboard/logistica/inventario' // Desactivado temporalmente
         },
         {
           label: 'Categorias',
-          icon: Tags
+          icon: Tags,
+          route: '/dashboard/logistica/categorias'
+        },
+        {
+          label: 'Subcategorias',
+          icon: Tags,
+          route: '/dashboard/logistica/sub-categorias'
         },
         {
           label: 'Marcas',
-          icon: Boxes
+          icon: Boxes,
+          route: '/dashboard/logistica/marcas'
         },
         {
           label: 'StockSede',
