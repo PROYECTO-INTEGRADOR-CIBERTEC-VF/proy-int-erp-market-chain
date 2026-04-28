@@ -19,7 +19,7 @@ public class Marca {
     @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
 
-    @Column(name = "codigo_marca", length = 3)
+    @Column(name = "codigo_marca", columnDefinition = "CHAR(3)")
     private String codigoMarca;
 
     @Column(name = "estado")
