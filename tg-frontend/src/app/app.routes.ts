@@ -25,31 +25,71 @@ export const routes: Routes = [
 			),
 		children: [
 			{
-				path: 'sedes',
+				path: 'administracion/sedes',
 				loadChildren: () =>
 					import('./features/sedes/sedes.routes').then((m) => m.SEDES_ROUTES)
 			},
 			{
-				path: 'usuarios',
+				path: 'administracion/usuarios',
 				loadChildren: () =>
 					import('./features/gerentes/gerentes.routes').then((m) => m.GERENTES_ROUTES)
 			},
 			{
+				path: 'administracion/gerentes',
+				pathMatch: 'full',
+				redirectTo: 'administracion/usuarios'
+			},
+			{
+				path: 'logistica',
+				canActivate: [authGuard],
+				canActivateChild: [authChildGuard],
+				children: [
+					{
+						path: 'marcas',
+						loadChildren: () =>
+							import('./features/logistica/marcas.routes').then((m) => m.MARCAS_ROUTES)
+					},
+					{
+						path: 'categorias',
+						loadChildren: () =>
+							import('./features/logistica/categorias.routes').then((m) => m.CATEGORIAS_ROUTES)
+					},
+					{
+						path: 'sub-categorias',
+						loadChildren: () =>
+							import('./features/logistica/sub-categorias.routes').then((m) => m.SUBCATEGORIAS_ROUTES)
+					}
+				]
+			},
+			{
+				path: 'compras/compras',
+				loadChildren: () =>
+					import('./features/compras/compras.routes').then((m) => m.COMPRAS_ROUTES)
+			},
+			{
+				path: 'sedes',
+				pathMatch: 'full',
+				redirectTo: 'administracion/sedes'
+			},
+			{
+				path: 'usuarios',
+				pathMatch: 'full',
+				redirectTo: 'administracion/usuarios'
+			},
+			{
 				path: 'gerentes',
 				pathMatch: 'full',
-				redirectTo: 'usuarios'
+				redirectTo: 'administracion/usuarios'
 			},
 			{
 				path: 'inventario',
-				loadChildren: () =>
-					import('./features/inventario/inventario.routes').then(
-						(m) => m.INVENTARIO_ROUTES
-					)
+				pathMatch: 'full',
+				redirectTo: 'logistica/inventario'
 			},
 			{
 				path: 'compras',
-				loadChildren: () =>
-					import('./features/compras/compras.routes').then((m) => m.COMPRAS_ROUTES)
+				pathMatch: 'full',
+				redirectTo: 'compras/compras'
 			}
 		]
 	},
