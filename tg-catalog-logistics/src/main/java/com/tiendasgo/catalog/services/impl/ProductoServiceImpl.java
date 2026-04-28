@@ -22,4 +22,3 @@ public class ProductoServiceImpl implements IProductoService {
                 .collect(Collectors.toList());
     }
 }
-

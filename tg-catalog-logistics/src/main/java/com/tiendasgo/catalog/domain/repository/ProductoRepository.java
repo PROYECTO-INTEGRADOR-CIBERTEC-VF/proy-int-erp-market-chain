@@ -7,9 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductoRepository extends JpaRepository<Producto, Long> {
+public interface ProductoRepository extends JpaRepository<Producto, Integer> {
     List<Producto> findByEstado(Boolean estado);
-    List<Producto> findByMarcaId(Long marcaId);
-    List<Producto> findBySubCategoriaId(Long subCategoriaId);
+    List<Producto> findByMarcaId(Integer marcaId);
+    List<Producto> findBySubCategoriaId(Integer subCategoriaId);
 }
-

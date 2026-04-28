@@ -33,7 +33,7 @@ public class SubCategoriaServiceImpl implements ISubCategoriaService {
     }
 
     @Override
-    public SubCategoriaResponse obtenerPorId(Long id) {
+    public SubCategoriaResponse obtenerPorId(Integer id) {
         SubCategoria s = subCategoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("SubCategoria no encontrada: " + id));
         return subCategoriaMapper.toResponse(s);
@@ -60,7 +60,7 @@ public class SubCategoriaServiceImpl implements ISubCategoriaService {
 
     @Override
     @Transactional
-    public SubCategoriaResponse actualizar(Long id, SubCategoriaRequest req) {
+    public SubCategoriaResponse actualizar(Integer id, SubCategoriaRequest req) {
         SubCategoria existing = subCategoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("SubCategoria no encontrada: " + id));
 
@@ -80,7 +80,7 @@ public class SubCategoriaServiceImpl implements ISubCategoriaService {
 
     @Override
     @Transactional
-    public void eliminar(Long id) {
+    public void eliminar(Integer id) {
         SubCategoria existing = subCategoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("SubCategoria no encontrada: " + id));
         existing.setActivo(Boolean.FALSE);

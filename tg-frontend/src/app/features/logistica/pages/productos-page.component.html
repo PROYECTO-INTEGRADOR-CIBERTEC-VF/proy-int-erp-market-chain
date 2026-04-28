@@ -1,0 +1,53 @@
+<section class="space-y-6">
+  <header class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div class="space-y-2">
+      <h1 class="font-headline text-3xl font-extrabold text-on-surface">Productos</h1>
+      <p class="font-body text-sm text-on-surface-variant">Listado de productos registrados en el sistema.</p>
+    </div>
+  </header>
+
+  @if (errorMessage().length > 0) {
+    <p class="text-sm font-medium text-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <app-card>
+      <p class="text-sm text-on-surface-variant">Cargando productos...</p>
+    </app-card>
+  } @else {
+    <app-card>
+      @if (productos().length === 0) {
+        <p class="text-sm text-on-surface-variant">No hay productos registrados.</p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-on-surface/10 text-on-surface-variant">
+                <th class="px-3 py-2 font-semibold">Nombre</th>
+                <th class="px-3 py-2 font-semibold">SKU</th>
+                <th class="px-3 py-2 font-semibold">Marca</th>
+                <th class="px-3 py-2 font-semibold">Sub-Categoría</th>
+                <th class="px-3 py-2 font-semibold">Precio Costo</th>
+                <th class="px-3 py-2 font-semibold">Precio Venta</th>
+                <th class="px-3 py-2 font-semibold">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (producto of productos(); track producto.id) {
+                <tr class="border-b border-on-surface/10 text-on-surface">
+                  <td class="px-3 py-2">{{ producto.nombreBase }}{{ producto.variante ? (' - ' + producto.variante) : '' }}</td>
+                  <td class="px-3 py-2">{{ producto.sku ?? '' }}</td>
+                  <td class="px-3 py-2">{{ producto.nombreMarca ?? '' }}</td>
+                  <td class="px-3 py-2">{{ producto.nombreSubCategoria ?? '' }}</td>
+                  <td class="px-3 py-2">{{ producto.precioCosto ?? '' }}</td>
+                  <td class="px-3 py-2">{{ producto.precioVenta ?? '' }}</td>
+                  <td class="px-3 py-2">{{ formatEstado(producto.estado) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </app-card>
+  }
+</section>

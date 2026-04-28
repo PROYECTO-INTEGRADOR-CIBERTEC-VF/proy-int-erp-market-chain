@@ -26,7 +26,7 @@ public class MarcaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MarcaResponse> obtener(@PathVariable Long id) {
+    public ResponseEntity<MarcaResponse> obtener(@PathVariable Integer id) {
         return ResponseEntity.ok(marcaService.obtenerPorId(id));
     }
 
@@ -37,12 +37,12 @@ public class MarcaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MarcaResponse> actualizar(@PathVariable Long id, @Valid @RequestBody MarcaRequest req) {
+    public ResponseEntity<MarcaResponse> actualizar(@PathVariable Integer id, @Valid @RequestBody MarcaRequest req) {
         return ResponseEntity.ok(marcaService.actualizar(id, req));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         marcaService.eliminar(id);
         return ResponseEntity.noContent().build();
     }

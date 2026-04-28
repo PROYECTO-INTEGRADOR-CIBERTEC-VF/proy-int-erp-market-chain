@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class ProductoResponse {
-    private Long id;
+    private Integer id;
     private String nombreBase;
     private String variante;
     private String medidaValor;
@@ -21,4 +21,3 @@ public class ProductoResponse {
     private String nombreMarca;
     private String nombreSubCategoria;
 }
-

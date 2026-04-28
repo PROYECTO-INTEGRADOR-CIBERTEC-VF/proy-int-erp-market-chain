@@ -30,7 +30,7 @@ public class MarcaServiceImpl implements IMarcaService {
     }
 
     @Override
-    public MarcaResponse obtenerPorId(Long id) {
+    public MarcaResponse obtenerPorId(Integer id) {
         Marca m = marcaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada: " + id));
         return marcaMapper.toResponse(m);
@@ -50,7 +50,7 @@ public class MarcaServiceImpl implements IMarcaService {
 
     @Override
     @Transactional
-    public MarcaResponse actualizar(Long id, MarcaRequest req) {
+    public MarcaResponse actualizar(Integer id, MarcaRequest req) {
         Marca existing = marcaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada: " + id));
 
@@ -68,7 +68,7 @@ public class MarcaServiceImpl implements IMarcaService {
 
     @Override
     @Transactional
-    public void eliminar(Long id) {
+    public void eliminar(Integer id) {
         Marca existing = marcaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada: " + id));
         existing.setActivo(Boolean.FALSE);

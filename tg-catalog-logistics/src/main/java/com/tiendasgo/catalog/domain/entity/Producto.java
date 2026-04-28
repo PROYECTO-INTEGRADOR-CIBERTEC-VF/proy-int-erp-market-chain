@@ -14,7 +14,7 @@ public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_producto")
-    private Long id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_marca", nullable = false)
@@ -51,4 +51,3 @@ public class Producto {
     @Column(name = "estado")
     private Boolean estado;
 }
-

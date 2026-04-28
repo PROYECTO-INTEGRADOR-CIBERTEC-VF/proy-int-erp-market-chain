@@ -8,12 +8,12 @@ import java.util.List;
 public interface ISubCategoriaService {
     List<SubCategoriaResponse> listarTodos();
 
-    SubCategoriaResponse obtenerPorId(Long id);
+    SubCategoriaResponse obtenerPorId(Integer id);
 
     SubCategoriaResponse crear(SubCategoriaRequest req);
 
-    SubCategoriaResponse actualizar(Long id, SubCategoriaRequest req);
+    SubCategoriaResponse actualizar(Integer id, SubCategoriaRequest req);
 
-    void eliminar(Long id);
+    void eliminar(Integer id);
 }
 

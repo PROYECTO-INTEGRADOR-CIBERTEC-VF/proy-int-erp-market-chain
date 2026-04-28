@@ -50,6 +50,11 @@ export const routes: Routes = [
 							import('./features/logistica/marcas.routes').then((m) => m.MARCAS_ROUTES)
 					},
 					{
+						path: 'productos',
+						loadChildren: () =>
+							import('./features/logistica/productos.routes').then((m) => m.PRODUCTOS_ROUTES)
+					},
+					{
 						path: 'categorias',
 						loadChildren: () =>
 							import('./features/logistica/categorias.routes').then((m) => m.CATEGORIAS_ROUTES)

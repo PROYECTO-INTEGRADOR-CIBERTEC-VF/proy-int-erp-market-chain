@@ -6,4 +6,3 @@ import java.util.List;
 public interface IProductoService {
     List<ProductoResponse> listarTodos();
 }
-

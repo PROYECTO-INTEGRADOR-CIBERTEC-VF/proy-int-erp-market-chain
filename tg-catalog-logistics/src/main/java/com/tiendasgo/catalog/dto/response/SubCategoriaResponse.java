@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class SubCategoriaResponse {
-    private Long id;
+    private Integer id;
     private String nombre;
     private Boolean activo;
     private Integer categoriaId;
