@@ -38,6 +38,7 @@ export class MarcasFormPageComponent {
 
   protected readonly form = this.fb.group({
     nombre: ['', [Validators.required, Validators.maxLength(50)]],
+    codigo: [{ value: '', disabled: true }]
   });
 
   constructor() {
@@ -57,7 +58,7 @@ export class MarcasFormPageComponent {
 
     this.marcasService.getById(id).subscribe({
       next: (marca) => {
-        this.form.patchValue({ nombre: marca.nombre });
+        this.form.patchValue({ nombre: marca.nombre, codigo: marca.codigoMarca ?? '' });
         this.loading.set(false);
       },
       error: (error: unknown) => {
@@ -75,7 +76,8 @@ export class MarcasFormPageComponent {
 
     const raw = this.form.getRawValue();
     const payload = {
-      nombre: (raw.nombre ?? '').toString().trim()
+      nombre: (raw.nombre ?? '').toString().trim(),
+      codigoMarca: (raw.codigo ?? '').toString().trim() || null
     };
 
     this.pendingPayload.set(payload);
@@ -127,7 +129,8 @@ export class MarcasFormPageComponent {
     this.pendingPayload.set(null);
   }
 
-  private createMarca(payload: { nombre: string }, token: string): void {
+  private createMarca(payload: { nombre: string; codigoMarca?: string | null }, token: string): void {
+    // creation keeps relying on server-generated codigo; send only nombre
     this.marcasApi.crearMarca(payload.nombre, token).subscribe({
       next: () => void this.router.navigate(['/dashboard/logistica/marcas']),
       error: (error: unknown) => {
@@ -145,8 +148,8 @@ export class MarcasFormPageComponent {
     });
   }
 
-  private updateMarca(id: number, payload: { nombre: string }, token: string): void {
-    this.marcasApi.actualizarMarca(id, payload.nombre, token).subscribe({
+  private updateMarca(id: number, payload: { nombre: string; codigoMarca?: string | null }, token: string): void {
+    this.marcasApi.actualizarMarca(id, { nombre: payload.nombre, codigoMarca: payload.codigoMarca ?? null }, token).subscribe({
       next: () => void this.router.navigate(['/dashboard/logistica/marcas']),
       error: (error: unknown) => {
         this.saving.set(false);

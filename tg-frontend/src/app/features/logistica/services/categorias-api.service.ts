@@ -79,13 +79,19 @@ export class CategoriasApiService {
 
   crearSubCategoria(data: SubCategoriaRequest, token: string): Observable<SubCategoriaResponse> {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' });
-    const payload = { nombre: data.nombre, idCategoria: data.idCategoria };
+    const payload: Record<string, unknown> = { nombre: data.nombre, idCategoria: data.idCategoria };
+    if (data.prefijo != null) {
+      payload['prefijo'] = data.prefijo;
+    }
     return this.http.post<SubCategoriaResponse>('http://localhost:8081/api/catalog/sub-categorias', payload, { headers });
   }
 
   actualizarSubCategoria(id: number, data: SubCategoriaRequest, token: string): Observable<SubCategoriaResponse> {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' });
-    const payload = { nombre: data.nombre, idCategoria: data.idCategoria };
+    const payload: Record<string, unknown> = { nombre: data.nombre, idCategoria: data.idCategoria };
+    if (data.prefijo != null) {
+      payload['prefijo'] = data.prefijo;
+    }
     return this.http.put<SubCategoriaResponse>(`http://localhost:8081/api/catalog/sub-categorias/${id}`, payload, { headers });
   }
 

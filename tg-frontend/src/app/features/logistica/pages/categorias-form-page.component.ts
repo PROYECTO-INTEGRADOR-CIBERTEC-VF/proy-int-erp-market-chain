@@ -76,7 +76,8 @@ export class CategoriasFormPageComponent {
 
     const raw = this.form.getRawValue();
     const payload: CategoriaRequest = {
-      nombre: (raw.nombre ?? '').toString().trim()
+      nombre: (raw.nombre ?? '').toString().trim(),
+      prefijo: (raw.prefijo ?? '').toString().trim() || null
     };
 
     this.pendingPayload.set(payload);

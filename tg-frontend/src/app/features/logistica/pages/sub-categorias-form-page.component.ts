@@ -42,7 +42,8 @@ export class SubCategoriasFormPageComponent {
 
   protected readonly form = this.fb.group({
     nombre: ['', [Validators.required, Validators.maxLength(50)]],
-    idCategoria: [null, [Validators.required]]
+    idCategoria: [null, [Validators.required]],
+    prefijo: [{ value: '', disabled: true }]
   });
 
   protected readonly categoriasActivas = signal<{ id: number; nombre: string }[]>([]);
@@ -72,7 +73,7 @@ export class SubCategoriasFormPageComponent {
 
     this.categoriasService.getSubCategoriaById(id).pipe(finalize(() => this.loading.set(false))).subscribe({
       next: (s) => {
-        this.form.patchValue({ nombre: s.nombre });
+        this.form.patchValue({ nombre: s.nombre, prefijo: s.prefijo ?? '' });
         const ctrl = this.form.get('idCategoria');
         if (ctrl) {
           (ctrl as any).setValue(s.idCategoria);
@@ -91,7 +92,8 @@ export class SubCategoriasFormPageComponent {
     const raw = this.form.getRawValue();
     const payload: SubCategoriaRequest = {
       nombre: (raw.nombre ?? '').toString().trim(),
-      idCategoria: Number(raw.idCategoria)
+      idCategoria: Number(raw.idCategoria),
+      prefijo: (raw.prefijo ?? '').toString().trim() || null
     };
 
     this.pendingPayload.set(payload);

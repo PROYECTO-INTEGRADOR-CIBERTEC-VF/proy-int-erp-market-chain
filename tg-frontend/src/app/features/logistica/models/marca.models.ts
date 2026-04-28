@@ -1,5 +1,6 @@
 export interface MarcaRequest {
   nombre: string;
+  codigoMarca?: string | null;
 }
 
 export interface MarcaResponse {

@@ -92,8 +92,8 @@ export class SidebarComponent {
       items: [
         {
           label: 'Productos',
-          icon: Package
-          // route: '/dashboard/logistica/inventario' // Desactivado temporalmente
+          icon: Package,
+          route: '/dashboard/logistica/productos'
         },
         {
           label: 'Categorias',

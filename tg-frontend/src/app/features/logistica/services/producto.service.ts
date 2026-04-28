@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, catchError } from 'rxjs';
 
 import { Producto } from '../models/producto.model';
 
@@ -10,6 +10,15 @@ import { Producto } from '../models/producto.model';
 export class ProductoService {
   private readonly http = inject(HttpClient);
   private readonly url = 'http://localhost:8081/api/productos';
+  // Try catalog namespace first to match other catalog services
+  private readonly catalogUrl = 'http://localhost:8081/api/catalog/productos';
+
+  // Compatible naming with other services
+  getAll(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(this.catalogUrl).pipe(
+      catchError(() => this.listarTodos())
+    );
+  }
 
   listarTodos(): Observable<Producto[]> {
     return this.http.get<unknown>(this.url).pipe(map((raw) => this.normalizeListResponse(raw)));

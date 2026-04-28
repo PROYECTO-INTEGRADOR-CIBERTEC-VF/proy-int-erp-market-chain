@@ -1,6 +1,7 @@
 export interface SubCategoriaRequest {
   nombre: string;
   idCategoria: number;
+  prefijo?: string | null;
 }
 
 export interface SubCategoriaResponse {

@@ -34,10 +34,10 @@ export class MarcasApiService {
     return this.http.post<MarcaResponse>('http://localhost:8081/api/catalog/marcas', { nombre }, { headers });
   }
 
-  // Actualizar marca (no modifica codigoMarca)
-  actualizarMarca(id: number, nombre: string, token: string): Observable<MarcaResponse> {
+  // Actualizar marca (envía codigoMarca para evitar que quede NULL)
+  actualizarMarca(id: number, data: { nombre: string; codigoMarca?: string | null }, token: string): Observable<MarcaResponse> {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' });
-    return this.http.put<MarcaResponse>(`http://localhost:8081/api/catalog/marcas/${id}`, { nombre }, { headers });
+    return this.http.put<MarcaResponse>(`http://localhost:8081/api/catalog/marcas/${id}`, data, { headers });
   }
 
   // Borrar marca (ADMIN)

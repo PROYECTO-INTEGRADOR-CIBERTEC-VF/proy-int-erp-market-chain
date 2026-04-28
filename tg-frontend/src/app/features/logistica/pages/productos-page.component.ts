@@ -33,7 +33,7 @@ export class ProductosPageComponent implements OnInit {
     this.errorMessage.set('');
 
     this.productoService
-      .listarTodos()
+      .getAll()
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (data) => this.productos.set(data),
