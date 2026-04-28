@@ -27,6 +27,9 @@ public class SubCategoria {
 
     @Column(name = "estado")
     private Boolean activo;
+
+    @Column(name = "prefijo", length = 3, columnDefinition = "CHAR(3)")
+    private String prefijo;
 }
 
 

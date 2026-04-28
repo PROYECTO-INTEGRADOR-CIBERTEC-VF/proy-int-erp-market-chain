@@ -12,6 +12,8 @@ public interface IMarcaService {
 
     MarcaResponse crear(MarcaRequest req);
 
+    String generarCodigoPorNombre(String nombre);
+
     MarcaResponse actualizar(Integer id, MarcaRequest req);
 
     void eliminar(Integer id);

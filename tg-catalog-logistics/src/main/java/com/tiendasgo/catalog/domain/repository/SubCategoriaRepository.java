@@ -13,5 +13,6 @@ public interface SubCategoriaRepository extends JpaRepository<SubCategoria, Inte
     List<SubCategoria> findByCategoriaId(Integer categoriaId);
 
     Optional<SubCategoria> findByNombreAndCategoriaId(String nombre, Integer categoriaId);
+    boolean existsByPrefijo(String prefijo);
 }
 

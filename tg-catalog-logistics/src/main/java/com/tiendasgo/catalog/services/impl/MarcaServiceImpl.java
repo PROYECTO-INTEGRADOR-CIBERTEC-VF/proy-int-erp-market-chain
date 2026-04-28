@@ -4,6 +4,7 @@ import com.tiendasgo.catalog.domain.entity.Marca;
 import com.tiendasgo.catalog.domain.repository.MarcaRepository;
 import com.tiendasgo.catalog.dto.request.MarcaRequest;
 import com.tiendasgo.catalog.dto.response.MarcaResponse;
+import com.tiendasgo.catalog.exceptions.CodigoMarcaExhaustedException;
 import com.tiendasgo.catalog.exceptions.DuplicateResourceException;
 import com.tiendasgo.catalog.exceptions.ResourceNotFoundException;
 import com.tiendasgo.catalog.services.IMarcaService;
@@ -28,7 +29,6 @@ public class MarcaServiceImpl implements IMarcaService {
                 .map(marcaMapper::toResponse)
                 .collect(Collectors.toList());
     }
-
     @Override
     public MarcaResponse obtenerPorId(Integer id) {
         Marca m = marcaRepository.findById(id)
@@ -43,7 +43,9 @@ public class MarcaServiceImpl implements IMarcaService {
             throw new DuplicateResourceException("Ya existe una marca con ese nombre: " + req.getNombre());
         }
         Marca m = marcaMapper.toEntity(req);
-        m.setActivo(Boolean.TRUE);
+        // Siempre generar codigo_marca en backend
+        String codigo = generarCodigoPorNombre(req.getNombre());
+        m.setCodigoMarca(codigo);
         Marca saved = marcaRepository.save(m);
         return marcaMapper.toResponse(saved);
     }
@@ -55,15 +57,83 @@ public class MarcaServiceImpl implements IMarcaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada: " + id));
 
         // si cambia el nombre, verificar duplicado
-        if (!existing.getNombre().equalsIgnoreCase(req.getNombre()) && marcaRepository.existsByNombre(req.getNombre())) {
+        boolean nombreCambio = !existing.getNombre().equalsIgnoreCase(req.getNombre());
+        if (nombreCambio && marcaRepository.existsByNombre(req.getNombre())) {
             throw new DuplicateResourceException("Ya existe una marca con ese nombre: " + req.getNombre());
         }
 
         existing.setNombre(req.getNombre());
-        existing.setCodigoMarca(req.getCodigoMarca());
+        if (nombreCambio) {
+            String nuevoCodigo = generarCodigoPorNombre(req.getNombre());
+            existing.setCodigoMarca(nuevoCodigo);
+        }
 
         Marca updated = marcaRepository.save(existing);
         return marcaMapper.toResponse(updated);
+    }
+
+    @Override
+    public String generarCodigoPorNombre(String nombre) {
+        return generateCodigoCandidate(nombre);
+    }
+
+    // Helpers
+    private static final java.util.Random RND = new java.util.Random();
+
+    private String normalizarBase(String nombre) {
+        if (nombre == null) return "XXX";
+        String base = nombre.strip().toUpperCase();
+        base = java.text.Normalizer.normalize(base, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "")
+                .replaceAll("[^A-Z0-9]", "");
+        if (base.length() < 3) {
+            base = String.format("%-3s", base).replace(' ', 'X');
+        }
+        return base;
+    }
+
+    private String generateCodigoCandidate(String nombre) {
+        String base = normalizarBase(nombre);
+        String candidate = base.substring(0, 3);
+
+        // Intento natural
+        if (!marcaRepository.existsByCodigoMarca(candidate)) return candidate;
+
+        // Fallback semántico: mantener los 2 primeros chars, rotar el 3ro
+        // con los caracteres restantes del propio nombre (sin repetir)
+        String prefix = candidate.substring(0, 2);
+        java.util.LinkedHashSet<Character> letrasRestantes = new java.util.LinkedHashSet<>();
+        for (int i = 2; i < base.length(); i++) {
+            letrasRestantes.add(base.charAt(i));
+        }
+        letrasRestantes.remove(candidate.charAt(2)); // ya se intentó
+
+        for (char c : letrasRestantes) {
+            String attempt = prefix + c;
+            if (!marcaRepository.existsByCodigoMarca(attempt)) return attempt;
+        }
+
+        // Fallback numérico: prefijo 1 char + 2 dígitos  (bug corregido)
+        String prefix1 = candidate.substring(0, 1);
+        for (int i = 1; i <= 99; i++) {
+            String attempt = prefix1 + String.format("%02d", i);
+            if (!marcaRepository.existsByCodigoMarca(attempt)) return attempt;
+        }
+
+        // Último recurso: random alfanumérico
+        for (int i = 0; i < 1000; i++) {
+            StringBuilder b = new StringBuilder(3);
+            for (int j = 0; j < 3; j++) {
+                int r = RND.nextInt(36);
+                b.append(r < 10 ? (char) ('0' + r) : (char) ('A' + (r - 10)));
+            }
+            String attempt = b.toString();
+            if (!marcaRepository.existsByCodigoMarca(attempt)) return attempt;
+        }
+
+        throw new CodigoMarcaExhaustedException(
+                "No se pudo generar un codigo_marca único para: " + nombre
+        );
     }
 
     @Override
@@ -71,8 +141,8 @@ public class MarcaServiceImpl implements IMarcaService {
     public void eliminar(Integer id) {
         Marca existing = marcaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada: " + id));
-        existing.setActivo(Boolean.FALSE);
-        marcaRepository.save(existing);
+        // la tabla marcas no tiene columna estado; si en el futuro quieres soft-delete, agregar columna estado
+        marcaRepository.delete(existing);
     }
 }
 

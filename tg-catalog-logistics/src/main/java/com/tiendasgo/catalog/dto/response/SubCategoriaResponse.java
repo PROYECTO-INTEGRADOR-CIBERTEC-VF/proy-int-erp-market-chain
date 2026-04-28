@@ -12,5 +12,6 @@ public class SubCategoriaResponse {
     private Boolean activo;
     private Integer categoriaId;
     private String nombreCategoriaPadre;
+    private String prefijo;
 }
 

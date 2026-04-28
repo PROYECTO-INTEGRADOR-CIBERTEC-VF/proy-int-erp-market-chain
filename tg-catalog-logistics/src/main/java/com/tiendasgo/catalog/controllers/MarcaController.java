@@ -25,6 +25,12 @@ public class MarcaController {
         return ResponseEntity.ok(marcaService.listarTodos());
     }
 
+    @GetMapping("/generar-codigo")
+    public ResponseEntity<String> generarCodigo(@RequestParam("nombre") String nombre) {
+        String codigo = marcaService.generarCodigoPorNombre(nombre);
+        return ResponseEntity.ok(codigo);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MarcaResponse> obtener(@PathVariable Integer id) {
         return ResponseEntity.ok(marcaService.obtenerPorId(id));

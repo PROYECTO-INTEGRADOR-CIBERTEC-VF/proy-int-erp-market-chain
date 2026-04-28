@@ -12,5 +12,9 @@ public interface MarcaRepository extends JpaRepository<Marca, Integer> {
     Optional<Marca> findByNombre(String nombre);
 
     boolean existsByNombre(String nombre);
+
+    Optional<Marca> findByCodigoMarca(String codigoMarca);
+
+    boolean existsByCodigoMarca(String codigoMarca);
 }
 
