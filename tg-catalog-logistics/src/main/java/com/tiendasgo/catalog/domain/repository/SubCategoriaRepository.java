@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SubCategoriaRepository extends JpaRepository<SubCategoria, Long> {
+public interface SubCategoriaRepository extends JpaRepository<SubCategoria, Integer> {
 
     List<SubCategoria> findByCategoriaId(Integer categoriaId);
 
     Optional<SubCategoria> findByNombreAndCategoriaId(String nombre, Integer categoriaId);
+    boolean existsByPrefijo(String prefijo);
 }
 

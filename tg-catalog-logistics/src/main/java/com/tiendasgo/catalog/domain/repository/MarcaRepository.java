@@ -7,10 +7,14 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface MarcaRepository extends JpaRepository<Marca, Long> {
+public interface MarcaRepository extends JpaRepository<Marca, Integer> {
 
     Optional<Marca> findByNombre(String nombre);
 
     boolean existsByNombre(String nombre);
+
+    Optional<Marca> findByCodigoMarca(String codigoMarca);
+
+    boolean existsByCodigoMarca(String codigoMarca);
 }
 

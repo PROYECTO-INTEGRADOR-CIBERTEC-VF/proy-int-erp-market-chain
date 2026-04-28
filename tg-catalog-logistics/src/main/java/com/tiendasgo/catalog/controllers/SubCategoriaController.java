@@ -34,7 +34,7 @@ public class SubCategoriaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> obtener(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> obtener(@PathVariable Integer id) {
         SubCategoriaResponse data = subCategoriaService.obtenerPorId(id);
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", Instant.now().toString());
@@ -54,7 +54,7 @@ public class SubCategoriaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> actualizar(@PathVariable Long id, @Valid @RequestBody SubCategoriaRequest req) {
+    public ResponseEntity<Map<String, Object>> actualizar(@PathVariable Integer id, @Valid @RequestBody SubCategoriaRequest req) {
         SubCategoriaResponse updated = subCategoriaService.actualizar(id, req);
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", Instant.now().toString());
@@ -64,7 +64,7 @@ public class SubCategoriaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         subCategoriaService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
