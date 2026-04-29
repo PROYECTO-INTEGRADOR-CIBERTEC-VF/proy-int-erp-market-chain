@@ -22,6 +22,10 @@ public class ProductoMapper {
                 .precioVenta(producto.getPrecioVenta())
                 .imagenUrl(producto.getImagenUrl())
                 .estado(producto.getEstado())
+
+                .idMarca(producto.getMarca() != null ? producto.getMarca().getId() : null)
+                .idSubCategoria(producto.getSubCategoria() != null ? producto.getSubCategoria().getId() : null)
+
                 .nombreMarca(producto.getMarca() != null ? producto.getMarca().getNombre() : null)
                 .nombreSubCategoria(producto.getSubCategoria() != null ? producto.getSubCategoria().getNombre() : null)
                 .build();

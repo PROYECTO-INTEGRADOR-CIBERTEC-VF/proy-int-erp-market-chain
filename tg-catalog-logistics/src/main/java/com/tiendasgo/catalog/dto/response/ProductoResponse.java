@@ -18,6 +18,10 @@ public class ProductoResponse {
     private BigDecimal precioVenta;
     private String imagenUrl;
     private Boolean estado;
+
+    private Integer idMarca;
+    private Integer idSubCategoria;
+
     private String nombreMarca;
     private String nombreSubCategoria;
 }
