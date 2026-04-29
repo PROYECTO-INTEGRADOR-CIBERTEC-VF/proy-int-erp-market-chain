@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface IProductoService {
     List<ProductoResponse> listarTodos();
+    ProductoResponse obtenerPorId(Integer id);
     ProductoResponse crear(ProductoRequest req);
+    ProductoResponse actualizar(Integer id, ProductoRequest req);
 }

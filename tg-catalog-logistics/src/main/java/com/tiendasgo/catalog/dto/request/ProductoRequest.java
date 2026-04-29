@@ -40,4 +40,7 @@ public class ProductoRequest {
 
     @Size(max = 255)
     private String imagenUrl;
+
+    @NotNull
+    private Boolean estado;
 }

@@ -35,6 +35,55 @@ public class ProductoServiceImpl implements IProductoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public ProductoResponse obtenerPorId(Integer id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+        return productoMapper.toResponse(producto);
+    }
+
+    @Override
+    @Transactional
+    public ProductoResponse actualizar(Integer id, ProductoRequest req) {
+        // 1. Verificar existencia
+        Producto existing = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+
+        // 2. Validar SKU (solo si cambió y no existe en otro producto)
+        if (!existing.getSku().equalsIgnoreCase(req.getSku()) &&
+                productoRepository.existsBySku(req.getSku())) {
+            throw new DuplicateResourceException("El SKU " + req.getSku() + " ya está en uso por otro producto.");
+        }
+
+        // 3. Actualizar campos de texto y valores
+        existing.setNombreBase(req.getNombreBase());
+        existing.setVariante(req.getVariante());
+        existing.setMedidaValor(req.getMedidaValor());
+        existing.setMedidaUnidad(req.getMedidaUnidad());
+        existing.setSku(req.getSku());
+        existing.setPrecioCosto(req.getPrecioCosto());
+        existing.setPrecioVenta(req.getPrecioVenta());
+        existing.setImagenUrl(req.getImagenUrl());
+        existing.setEstado(req.getEstado());
+
+        // 4. Actualizar Relaciones
+        // Nota: Debes inyectar MarcaRepository y SubCategoriaRepository
+        if (!existing.getMarca().getId().equals(req.getIdMarca())) {
+            Marca nuevaMarca = marcaRepository.findById(req.getIdMarca())
+                    .orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada"));
+            existing.setMarca(nuevaMarca);
+        }
+
+        if (!existing.getSubCategoria().getId().equals(req.getIdSubCategoria())) {
+            SubCategoria nuevaSub = subCategoriaRepository.findById(req.getIdSubCategoria())
+                    .orElseThrow(() -> new ResourceNotFoundException("Subcategoría no encontrada"));
+            existing.setSubCategoria(nuevaSub);
+        }
+
+        return productoMapper.toResponse(productoRepository.save(existing));
+    }
+
+    @Override
     @Transactional
     public ProductoResponse crear(ProductoRequest req) {
         if (req.getPrecioVenta().compareTo(req.getPrecioCosto()) <= 0) {
