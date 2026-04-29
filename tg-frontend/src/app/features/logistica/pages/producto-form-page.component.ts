@@ -57,12 +57,14 @@ export class ProductoFormPageComponent implements OnInit {
     idSubcategoria: [null as number | null, [Validators.required]],
     idMarca: [null as number | null, [Validators.required]],
     nombreBase: ['', [Validators.required, Validators.maxLength(100)]],
+    sku: [{ value: '', disabled: true }],
     variante: ['', [Validators.maxLength(50)]],
     medidaValor: ['', [Validators.maxLength(10)]],
     medidaUnidad: ['', [Validators.maxLength(5)]],
     precioCosto: [null as number | null, [Validators.required, Validators.min(0.01)]],
     precioVenta: [null as number | null, [Validators.required, Validators.min(0.01)]],
-    imagenUrl: ['', [Validators.pattern(/^https?:\/\/.+/)]]
+    imagenUrl: ['', [Validators.pattern(/^https?:\/\/.+/)]],
+    estado: [true]
   }, { validators: [this.priceValidator()] });
 
   ngOnInit(): void {
@@ -99,7 +101,7 @@ export class ProductoFormPageComponent implements OnInit {
   });
 }
 
-    private loadProducto(id: number): void {
+ private loadProducto(id: number): void {
         this.loading.set(true);
         this.error.set('');
 
@@ -109,16 +111,17 @@ export class ProductoFormPageComponent implements OnInit {
             next: (prod) => {
             this.form.patchValue({
 
-                idSubcategoria: prod.idSubCategoria ?? null, 
-                
-                idMarca: prod.idMarca ?? null,
+                idSubcategoria: prod.idSubCategoria,
+                sku: prod.sku,
+                idMarca: prod.idMarca,
                 nombreBase: prod.nombreBase,
                 variante: prod.variante ?? '',
                 medidaValor: prod.medidaValor?.toString() ?? '',
                 medidaUnidad: prod.medidaUnidad ?? '',
                 precioCosto: prod.precioCosto,
                 precioVenta: prod.precioVenta,
-                imagenUrl: prod.imagenUrl ?? ''
+                imagenUrl: prod.imagenUrl,
+                estado: prod.estado ?? true
             });
         },
         error: (err: unknown) => this.error.set(this.resolveError(err, 'No se pudo cargar el producto.'))
@@ -138,10 +141,12 @@ export class ProductoFormPageComponent implements OnInit {
       nombreBase: (raw.nombreBase ?? '').trim(),
       precioCosto: Number(raw.precioCosto),
       precioVenta: Number(raw.precioVenta),
+      sku: raw.sku,
       variante: raw.variante?.trim() || null,
       medidaValor: raw.medidaValor?.trim() || null,
       medidaUnidad: raw.medidaUnidad?.trim() || null,
-      imagenUrl: raw.imagenUrl?.trim() || null
+      imagenUrl: raw.imagenUrl?.trim() || null,
+      estado: raw.estado ?? true
     };
 
     this.pendingPayload.set(payload);

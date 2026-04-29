@@ -70,7 +70,7 @@ export class ProductoService {
       id: this.toNumberOrNull(src['id']),
       nombreBase: this.toString(src['nombreBase'] ?? src['nombre'] ?? src['nombre_base']),
       variante: this.toNullableString(this.toString(src['variante'] ?? src['variacion'])),
-      medidaValor: this.toNumberOrNull(src['medidaValor'] ?? src['medida_valor']),
+      medidaValor: this.toNullableString(this.toString(src['medidaValor'] ?? src['medida_valor'])),
       medidaUnidad: this.toNullableString(this.toString(src['medidaUnidad'] ?? src['medida_unidad'])),
       sku: this.toNullableString(this.toString(src['sku'])),
       precioCosto: this.toNumberOrNull(src['precioCosto'] ?? src['precio_costo']),

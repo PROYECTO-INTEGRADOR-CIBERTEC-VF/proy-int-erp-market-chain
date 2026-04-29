@@ -2,15 +2,19 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { AdminApprovalModalComponent } from '../../../shared/components/admin-approval-modal/admin-approval-modal.component';
 import { AppCardComponent } from '../../../shared/ui/app-card/app-card.component';
 import { Producto } from '../models/producto.model';
 import { ProductoService } from '../services/producto.service';
 import { finalize } from 'rxjs';
 
+import { AuthService } from '../../../core/auth/services/auth.service'; // Asegura esta ruta
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-productos-page',
   standalone: true,
-  imports: [AppCardComponent, RouterLink],
+  imports: [AppCardComponent, RouterLink, AdminApprovalModalComponent, CommonModule], 
   templateUrl: './productos-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -20,6 +24,49 @@ export class ProductosPageComponent implements OnInit {
   protected readonly productos = signal<Producto[]>([]);
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal('');
+
+  protected readonly approvalVisible = signal(false);
+  protected readonly approvalLoading = signal(false);
+  protected readonly approvalError = signal('');
+
+  private readonly authService = inject(AuthService);
+
+  private productToDelete = signal<Producto | null>(null);
+
+protected onAdminApproved(credentials: { email: string; password: string }): void {
+    const target = this.productToDelete();
+    if (!target) return;
+
+    this.approvalLoading.set(true);
+    this.approvalError.set('');
+
+    // Validamos con el AuthService igual que en Marcas
+    this.authService.validateAdminCredentials(credentials).subscribe({
+      next: (session: any) => {
+        const token = session?.token ?? '';
+        this.deleteProducto(target, token);
+      },
+      error: (error: unknown) => {
+        this.approvalLoading.set(false);
+        this.approvalError.set(this.resolveError(error));
+      }
+    });
+  }
+
+  protected onAdminCancelled(): void {
+    this.approvalVisible.set(false);
+    this.approvalLoading.set(false);
+    this.approvalError.set('');
+    this.productToDelete.set(null);
+  }
+
+  protected onDeleteClick(producto: Producto): void {
+    this.productToDelete.set(producto);
+    this.approvalError.set('');
+    this.approvalVisible.set(true);
+  }
+
+  
 
   ngOnInit(): void {
     this.loadProductos();
@@ -55,4 +102,19 @@ export class ProductosPageComponent implements OnInit {
 
     return 'No se pudo cargar el listado de productos.';
   }
+
+
+  private deleteProducto(producto: Producto, token: string): void {
+    // Simulamos la respuesta exitosa del backend
+    console.log('Simulando borrado de producto:', producto.id);
+    console.log('Token de admin usado:', token);
+
+    // Solo cerramos el modal y limpiamos el target por ahora
+    this.approvalVisible.set(false);
+    this.approvalLoading.set(false);
+    this.productToDelete.set(null);
+    
+
+  }
+
 }

@@ -2,7 +2,7 @@ export interface Producto {
   id: number | null;
   nombreBase: string;
   variante: string | null;
-  medidaValor: number | null;
+  medidaValor: string | null;
   medidaUnidad: string | null;
   sku: string | null;
   precioCosto: number | null;
@@ -21,8 +21,10 @@ export interface ProductoRequest {
   nombreBase: string;
   variante?: string | null;
   medidaValor?: string | null;
+  sku?: string | null;
   medidaUnidad?: string | null;
   precioCosto: number;
   precioVenta: number;
   imagenUrl?: string | null;
+  estado: boolean;
 }
