@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -44,6 +45,7 @@ public class SubCategoriaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> crear(@Valid @RequestBody SubCategoriaRequest req) {
         SubCategoriaResponse created = subCategoriaService.crear(req);
         Map<String, Object> body = new HashMap<>();
@@ -54,6 +56,7 @@ public class SubCategoriaController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> actualizar(@PathVariable Integer id, @Valid @RequestBody SubCategoriaRequest req) {
         SubCategoriaResponse updated = subCategoriaService.actualizar(id, req);
         Map<String, Object> body = new HashMap<>();
@@ -64,9 +67,9 @@ public class SubCategoriaController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         subCategoriaService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 }
-

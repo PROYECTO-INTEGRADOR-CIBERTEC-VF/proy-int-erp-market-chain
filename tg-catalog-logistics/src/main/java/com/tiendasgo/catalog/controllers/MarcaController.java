@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -37,20 +38,22 @@ public class MarcaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MarcaResponse> crear(@Valid @RequestBody MarcaRequest req) {
         MarcaResponse created = marcaService.crear(req);
         return ResponseEntity.created(URI.create("/api/catalog/marcas/" + created.getId())).body(created);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MarcaResponse> actualizar(@PathVariable Integer id, @Valid @RequestBody MarcaRequest req) {
         return ResponseEntity.ok(marcaService.actualizar(id, req));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         marcaService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 }
-

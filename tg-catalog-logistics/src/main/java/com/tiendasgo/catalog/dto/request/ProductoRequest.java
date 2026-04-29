@@ -28,9 +28,7 @@ public class ProductoRequest {
     @Size(max = 5)
     private String medidaUnidad;
 
-    @NotBlank
-    @Size(max = 50)
-    private String sku;
+    private String sku; // Ignorado en creación, generado por backend
 
     @NotNull
     @Digits(integer = 15, fraction = 4)
@@ -43,4 +41,3 @@ public class ProductoRequest {
     @Size(max = 255)
     private String imagenUrl;
 }
-
