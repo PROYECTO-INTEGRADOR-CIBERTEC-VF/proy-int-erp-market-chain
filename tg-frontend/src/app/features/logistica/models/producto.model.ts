@@ -11,4 +11,18 @@ export interface Producto {
   estado: boolean;
   nombreMarca: string | null;
   nombreSubCategoria: string | null;
+  idMarca?: number | null;
+  idSubCategoria?: number | null;
+}
+
+export interface ProductoRequest {
+  idSubCategoria: number;
+  idMarca: number;
+  nombreBase: string;
+  variante?: string | null;
+  medidaValor?: string | null;
+  medidaUnidad?: string | null;
+  precioCosto: number;
+  precioVenta: number;
+  imagenUrl?: string | null;
 }

@@ -4,6 +4,9 @@
       <h1 class="font-headline text-3xl font-extrabold text-on-surface">Productos</h1>
       <p class="font-body text-sm text-on-surface-variant">Listado de productos registrados en el sistema.</p>
     </div>
+    <a routerLink="/dashboard/logistica/productos/nuevo" class="inline-flex items-center rounded-full border border-on-surface/10 bg-surface-container px-4 py-2 font-label text-sm font-semibold text-primary hover:bg-surface-container-high">
+      Nuevo producto
+    </a>
   </header>
 
   @if (errorMessage().length > 0) {

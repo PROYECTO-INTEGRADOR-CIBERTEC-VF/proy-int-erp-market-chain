@@ -32,3 +32,9 @@
     />
   </div>
 </div>
+
+@if (error()) {
+  <span class="text-xs text-error mt-1 animate-fadeIn">
+    {{ error() }}
+  </span>
+}

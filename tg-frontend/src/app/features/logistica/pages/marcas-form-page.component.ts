@@ -3,10 +3,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/services/auth.service';
-import { MarcasApiService } from '../services/marcas-api.service';
 import { AdminApprovalModalComponent } from '../../../shared/components/admin-approval-modal/admin-approval-modal.component';
 import { AppInputComponent } from '../../../shared/ui/app-input/app-input.component';
-import { MarcasService } from '../services/marcas.service';
+import { MarcasApiService } from '../services/marcas-api.service';
 
 @Component({
   selector: 'app-marcas-form-page',
@@ -19,7 +18,6 @@ export class MarcasFormPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-  private readonly marcasService = inject(MarcasService);
   private readonly marcasApi = inject(MarcasApiService);
   private readonly fb = inject(FormBuilder);
 
@@ -56,7 +54,7 @@ export class MarcasFormPageComponent {
     this.loading.set(true);
     this.error.set('');
 
-    this.marcasService.getById(id).subscribe({
+    this.marcasApi.getById(id).subscribe({  // ← marcasApi en vez de marcasService
       next: (marca) => {
         this.form.patchValue({ nombre: marca.nombre, codigo: marca.codigoMarca ?? '' });
         this.loading.set(false);

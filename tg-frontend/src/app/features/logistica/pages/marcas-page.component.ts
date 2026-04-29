@@ -7,7 +7,8 @@ import { finalize } from 'rxjs';
 import { AdminApprovalModalComponent } from '../../../shared/components/admin-approval-modal/admin-approval-modal.component';
 import { AppInputComponent } from '../../../shared/ui/app-input/app-input.component';
 import { AuthService } from '../../../core/auth/services/auth.service';
-import { MarcasService } from '../services/marcas.service';
+
+import { MarcasApiService } from '../services/marcas-api.service'; 
 import { MarcaResponse } from '../models/marca.models';
 
 @Component({
@@ -20,7 +21,9 @@ import { MarcaResponse } from '../models/marca.models';
 export class MarcasPageComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
-  private readonly marcasService = inject(MarcasService);
+  
+  // 2. INYECCIÓN DE LA CLASE CORRECTA
+  private readonly marcasService = inject(MarcasApiService); 
 
   protected readonly marcas = signal<MarcaResponse[]>([]);
   protected readonly loading = signal(false);
@@ -70,8 +73,9 @@ export class MarcasPageComponent {
     this.loading.set(true);
     this.errorMessage.set('');
 
+    // 3. CAMBIO DE getAll() A listAll()
     this.marcasService
-      .getAll()
+      .listAll() 
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (data) => this.marcas.set(data),
@@ -108,15 +112,17 @@ export class MarcasPageComponent {
 
   protected onAdminApproved(credentials: { email: string; password: string }): void {
     const target = this.deleteTarget();
-    if (!target) {
-      return;
-    }
+    if (!target) return;
 
     this.approvalLoading.set(true);
     this.approvalError.set('');
 
     this.authService.validateAdminCredentials(credentials).subscribe({
-      next: () => this.deleteMarca(target),
+      next: (session: any) => {
+        // Obtenemos el token para la eliminación
+        const token = session?.token ?? '';
+        this.deleteMarca(target, token);
+      },
       error: (error: unknown) => {
         this.approvalLoading.set(false);
         this.approvalError.set(this.resolveError(error, 'Credenciales inválidas.'));
@@ -131,8 +137,9 @@ export class MarcasPageComponent {
     this.deleteTarget.set(null);
   }
 
-  private deleteMarca(marca: MarcaResponse): void {
-    this.marcasService.delete(marca.id).subscribe({
+  private deleteMarca(marca: MarcaResponse, token: string): void {
+    // 4. CAMBIO DE delete() A borrarMarca() Y PASO DE TOKEN
+    this.marcasService.borrarMarca(marca.id, token).subscribe({
       next: () => {
         this.approvalVisible.set(false);
         this.approvalLoading.set(false);
@@ -150,7 +157,6 @@ export class MarcasPageComponent {
     if (error instanceof HttpErrorResponse) {
       return error.error?.message ?? error.message ?? fallback;
     }
-
     return typeof error === 'string' ? error : fallback;
   }
 }

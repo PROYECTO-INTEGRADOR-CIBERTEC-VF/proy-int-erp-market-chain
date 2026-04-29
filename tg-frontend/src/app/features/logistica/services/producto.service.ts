@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map, catchError } from 'rxjs';
 
-import { Producto } from '../models/producto.model';
+import { Producto, ProductoRequest } from '../models/producto.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +18,28 @@ export class ProductoService {
     return this.http.get<Producto[]>(this.catalogUrl).pipe(
       catchError(() => this.listarTodos())
     );
+  }
+
+  getById(id: number): Observable<Producto> {
+    return this.http.get<unknown>(`${this.catalogUrl}/${id}`).pipe(
+      map((raw) => this.toProducto(this.unwrapData(raw)))
+    );
+  }
+
+  create(data: ProductoRequest, token: string): Observable<Producto> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.post<Producto>(this.catalogUrl, data, { headers });
+  }
+
+  update(id: number, data: ProductoRequest, token: string): Observable<Producto> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.put<Producto>(`${this.catalogUrl}/${id}`, data, { headers });
   }
 
   listarTodos(): Observable<Producto[]> {
@@ -56,8 +78,9 @@ export class ProductoService {
       imagenUrl: this.toNullableString(this.toString(src['imagenUrl'] ?? src['imagen_url'] ?? src['imagen'])),
       estado: this.toBoolean(src['estado']),
       nombreMarca: this.toNullableString(this.toString(src['nombreMarca'] ?? src['marca'] ?? src['marca_nombre'])),
-      nombreSubCategoria: this.toNullableString(this.toString(src['nombreSubCategoria'] ?? src['subCategoria'] ?? src['subcategoria_nombre']))
-    };
+      nombreSubCategoria: this.toNullableString(this.toString(src['nombreSubCategoria'] ?? src['subCategoria'] ?? src['subcategoria_nombre'])),
+      idMarca: this.toNumberOrNull(src['idMarca'] ?? src['id_marca'] ?? src['marcaId']),
+      idSubCategoria: this.toNumberOrNull(src['idSubCategoria'] ?? src['idSubcategoria'] ?? src['id_subcategoria'] ?? src['subcategoriaId'])    };
   }
 
   private toString(value: unknown): string {

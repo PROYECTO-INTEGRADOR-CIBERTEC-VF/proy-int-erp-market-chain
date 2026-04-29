@@ -11,10 +11,15 @@ interface AuthResponse {
 @Injectable({ providedIn: 'root' })
 export class MarcasApiService {
   private readonly http = inject(HttpClient);
+  private readonly baseUrl = 'http://localhost:8081/api/catalog/marcas';
 
   // Autenticación: devuelve { token, rol }
   authLogin(email: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>('http://localhost:8080/api/auth/login', { email, password });
+  }
+
+  listAll(): Observable<MarcaResponse[]> {
+    return this.http.get<MarcaResponse[]>('http://localhost:8081/api/catalog/marcas');
   }
 
   // Generar código sugerido (respuesta text/plain)
@@ -32,6 +37,10 @@ export class MarcasApiService {
       'Content-Type': 'application/json'
     });
     return this.http.post<MarcaResponse>('http://localhost:8081/api/catalog/marcas', { nombre }, { headers });
+  }
+
+  getById(id: number): Observable<MarcaResponse> {
+    return this.http.get<MarcaResponse>(`http://localhost:8081/api/catalog/marcas/${id}`);
   }
 
   // Actualizar marca (envía codigoMarca para evitar que quede NULL)

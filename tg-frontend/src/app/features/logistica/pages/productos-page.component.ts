@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { AppCardComponent } from '../../../shared/ui/app-card/app-card.component';
 import { Producto } from '../models/producto.model';
@@ -9,7 +10,7 @@ import { finalize } from 'rxjs';
 @Component({
   selector: 'app-productos-page',
   standalone: true,
-  imports: [AppCardComponent],
+  imports: [AppCardComponent, RouterLink],
   templateUrl: './productos-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
