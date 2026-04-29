@@ -42,7 +42,12 @@
               <td class="px-3 py-4 font-headline font-semibold text-base text-on-surface align-middle">{{ s.nombre }}</td>
               <td class="px-3 py-4 text-left align-middle">{{ s.prefijo ?? '-' }}</td>
               <td class="px-3 py-4 text-center align-middle">{{ s.idCategoria ?? '-' }}</td>
-              <td class="px-3 py-4 text-center align-middle">{{ s.estado ? 'Activo' : 'Inactivo' }}</td>
+              <td class="px-3 py-4 text-center align-middle">
+                <span [class]="s.estado ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'"
+                      class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider">
+                  {{ s.estado ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
               <td class="px-3 py-4 text-center align-middle">{{ s.nombreCategoriaPadre ?? ('#' + s.idCategoria) }}</td>
               <td class="px-3 py-4 align-middle">
                 <div class="flex items-center justify-center gap-3" *ngIf="isAdmin()">

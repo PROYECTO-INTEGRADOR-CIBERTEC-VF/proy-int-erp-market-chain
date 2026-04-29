@@ -45,7 +45,12 @@
                   <td class="px-3 py-2">{{ producto.nombreSubCategoria ?? '' }}</td>
                   <td class="px-3 py-2">{{ producto.precioCosto ?? '' }}</td>
                   <td class="px-3 py-2">{{ producto.precioVenta ?? '' }}</td>
-                  <td class="px-3 py-2">{{ formatEstado(producto.estado) }}</td>
+                  <td class="px-3 py-4 text-center align-middle">
+                    <span [class]="producto.estado ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'"
+                          class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider">
+                      {{ producto.estado ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
                   <td class="px-3 py-2">
                     <div class="flex items-center justify-center gap-3">
                       <!-- Botón Editar -->

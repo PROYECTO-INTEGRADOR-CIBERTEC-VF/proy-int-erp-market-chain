@@ -40,7 +40,12 @@
               <td class="px-3 py-4 font-body text-primary-fixed-dim font-medium text-center align-middle">#{{ cat.id }}</td>
               <td class="px-3 py-4 font-headline font-semibold text-base text-on-surface align-middle">{{ cat.nombre }}</td>
               <td class="px-3 py-4 text-center align-middle">{{ cat.prefijo }}</td>
-              <td class="px-3 py-4 text-center align-middle">{{ cat.estado ? 'Activo' : 'Inactivo' }}</td>
+              <td class="px-3 py-4 text-center align-middle">
+                <span [class]="cat.estado ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'"
+                      class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider">
+                  {{ cat.estado ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
               <td class="px-3 py-4 align-middle">
                 <div class="flex items-center justify-center gap-3" *ngIf="isAdmin()">
                   <a [routerLink]="['/dashboard/logistica/categorias/editar', cat.id]" class="inline-flex h-10 items-center rounded-full border border-on-surface/10 bg-surface-container px-4 text-sm font-semibold text-primary hover:bg-surface-container-high">Editar</a>
