@@ -43,4 +43,13 @@ public class ProductoController {
             @Valid @RequestBody ProductoRequest req) {
         return ResponseEntity.ok(productoService.actualizar(id, req));
     }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<Void> cambiarEstado(
+            @PathVariable Integer id,
+            @RequestParam Boolean activo) {
+        productoService.cambiarEstado(id, activo);
+        return ResponseEntity.noContent().build();
+    }
+
 }

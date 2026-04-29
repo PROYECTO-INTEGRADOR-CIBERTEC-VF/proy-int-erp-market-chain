@@ -109,4 +109,14 @@ public class ProductoServiceImpl implements IProductoService {
         Producto saved = productoRepository.save(producto);
         return productoMapper.toResponse(saved);
     }
+    @Override
+    @Transactional
+    public void cambiarEstado(Integer id, Boolean nuevoEstado) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+        producto.setEstado(nuevoEstado);
+    }
+
+
+
 }
