@@ -9,6 +9,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
     private final JwtProvider jwtProvider;
 
     @Override
@@ -33,16 +37,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Claims claims = jwtProvider.validateTokenAndGetClaims(token);
                 String email = claims.getSubject();
 
-               List<String> roles = jwtProvider.getRoles(token);
+                // Log completo de claims para debugging
+                log.debug("JWT claims: {}", claims);
 
-               var authorities = roles.stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                List<String> roles = jwtProvider.getRoles(token);
+
+                // Normalizar roles: quitar prefijo "ROLE_" si existe y convertir a mayúsculas
+                var authorities = roles.stream()
+                        .map(role -> {
+                            String r = role == null ? "" : role.trim().toUpperCase();
+                            if (r.startsWith("ROLE_")) {
+                                r = r.substring(5);
+                            }
+                            return new SimpleGrantedAuthority("ROLE_" + r);
+                        })
                         .collect(Collectors.toList());
+
+                log.debug("Roles extraídos: {} -> Authorities: {}", roles, authorities);
 
                 var authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (Exception ignored) {
+            } catch (Exception ex) {
+                // Loguear y responder 401 para facilitar debugging
+                log.warn("Token inválido o expirado: {}", ex.getMessage());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"Token inválido o expirado\"}");
+                return; // No continuar la cadena de filtros
             }
         }
         filterChain.doFilter(request, response);
@@ -56,4 +78,3 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 }
-
