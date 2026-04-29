@@ -36,7 +36,7 @@ public class Producto {
     @Column(name = "medida_unidad", length = 5)
     private String medidaUnidad;
 
-    @Column(name = "sku", length = 50, nullable = false)
+    @Column(name = "sku", length = 50, nullable = false, unique = true)
     private String sku;
 
     @Column(name = "precio_costo", precision = 19, scale = 4, nullable = false)
