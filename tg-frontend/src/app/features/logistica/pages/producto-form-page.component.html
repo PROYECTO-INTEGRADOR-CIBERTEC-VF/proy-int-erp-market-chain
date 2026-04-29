@@ -88,6 +88,24 @@
           </div>
         </div>
 
+            <!-- Sección de Eliminación Lógica (Estado) -->
+            <div class="col-span-full mt-2 rounded-xl border border-on-surface/10 bg-surface-container-low p-4">
+            <div class="flex items-center justify-between">
+                <div class="space-y-1">
+                <h3 class="font-label text-sm font-bold text-on-surface">Estado</h3>
+                </div>
+                
+                <label class="relative inline-flex cursor-pointer items-center">
+                <input type="checkbox" formControlName="estado" class="peer sr-only">
+                <!-- Switch Estilizado -->
+                <div class="peer h-6 w-11 rounded-full bg-on-surface/20 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none"></div>
+                <span class="ml-3 font-label text-sm font-semibold text-on-surface">
+                    {{ form.controls.estado.value ? 'Activo' : 'Inactivo' }}
+                </span>
+                </label>
+            </div>
+            </div>
+
         <div class="mt-6 flex justify-end gap-3 border-t border-on-surface/10 pt-6">
           <button type="button" (click)="onCancel()" class="rounded-full px-4 py-2 font-label text-sm font-semibold text-on-surface hover:bg-on-surface/10" [disabled]="saving()">
             Cancelar
@@ -99,6 +117,8 @@
         </div>
       </form>
     }
+
+    
   </app-card>
 </div>
 
