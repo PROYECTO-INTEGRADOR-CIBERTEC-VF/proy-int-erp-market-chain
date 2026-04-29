@@ -43,6 +43,11 @@ public class MarcaServiceImpl implements IMarcaService {
             throw new DuplicateResourceException("Ya existe una marca con ese nombre: " + req.getNombre());
         }
         Marca m = marcaMapper.toEntity(req);
+
+        if (m.getActivo() == null) {
+            m.setActivo(true);
+        }
+
         // Siempre generar codigo_marca en backend
         String codigo = generarCodigoPorNombre(req.getNombre());
         m.setCodigoMarca(codigo);

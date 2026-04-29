@@ -22,8 +22,8 @@ public class Marca {
     @Column(name = "codigo_marca", columnDefinition = "CHAR(3)")
     private String codigoMarca;
 
-    @Column(name = "estado")
-    private Boolean activo;
+    @Column(name = "estado", nullable = false)
+    private Boolean activo = true;
 }
 
 
