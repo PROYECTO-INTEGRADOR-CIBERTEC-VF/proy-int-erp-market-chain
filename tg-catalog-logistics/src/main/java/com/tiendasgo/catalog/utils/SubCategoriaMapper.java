@@ -25,6 +25,7 @@ public class SubCategoriaMapper {
                 .activo(s.getActivo())
                 .categoriaId(s.getCategoria() != null ? s.getCategoria().getId() : null)
                 .nombreCategoriaPadre(s.getCategoria() != null ? s.getCategoria().getNombre() : null)
+                .prefijo(s.getPrefijo())
                 .build();
     }
 }

@@ -14,16 +14,16 @@ public class Marca {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_marca")
-    private Long id;
+    private Integer id;
 
     @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
 
-    @Column(name = "codigo_marca", length = 3)
+    @Column(name = "codigo_marca", columnDefinition = "CHAR(3)")
     private String codigoMarca;
 
-    @Column(name = "estado")
-    private Boolean activo;
+    @Column(name = "estado", nullable = false)
+    private Boolean activo = true;
 }
 
 

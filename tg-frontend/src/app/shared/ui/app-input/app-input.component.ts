@@ -23,13 +23,15 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class AppInputComponent implements ControlValueAccessor {
   readonly label = input('');
   readonly placeholder = input('');
-  readonly type = input<'text' | 'email' | 'password' | 'tel'>('text');
+  readonly type = input<'text' | 'email' | 'password' | 'tel' | 'number'>('text');
   readonly icon = input('mail');
+  readonly size = input<'normal' | 'sm'>('normal');
   readonly autocomplete = input('off');
   readonly readonly = input(false);
   readonly maxLength = input<number | null>(null);
   readonly digitsOnly = input(false);
   readonly requiredFirstDigit = input<string | null>(null);
+  readonly error = input<string>('');
 
   protected readonly value = signal('');
   protected readonly isDisabled = signal(false);

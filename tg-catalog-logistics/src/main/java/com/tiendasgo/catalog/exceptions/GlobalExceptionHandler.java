@@ -17,6 +17,11 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    public ResponseEntity<Map<String, Object>> handleInvalidPrice(InvalidPriceException ex, HttpServletRequest req) {
+        Map<String, Object> body = buildBody(req, "Bad Request", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
     private Map<String, Object> buildBody(HttpServletRequest req, String error, String message) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", Instant.now().toString());

@@ -1,0 +1,132 @@
+<div class="mx-auto max-w-3xl space-y-6 p-4 md:p-6">
+  <header class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div class="space-y-2">
+      <h1 class="font-headline text-3xl font-extrabold text-on-surface">{{ pageTitle() }}</h1>
+      <p class="font-body text-sm text-on-surface-variant">Completa los campos para registrar el producto.</p>
+    </div>
+    <button type="button" (click)="onCancel()" class="inline-flex items-center rounded-full border border-on-surface/10 bg-surface-container px-4 py-2 font-label text-sm font-semibold text-primary hover:bg-surface-container-high">
+      Volver
+    </button>
+  </header>
+
+  @if (error()) {
+    <p class="text-sm font-medium text-error" role="alert">{{ error() }}</p>
+  }
+  @if (dataError()) {
+    <p class="text-sm font-medium text-error" role="alert">{{ dataError() }}</p>
+  }
+
+  <app-card>
+    @if (loading() || loadingData()) {
+      <div class="flex justify-center p-8">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div class="flex flex-col space-y-1 w-full">
+            <label class="font-label text-sm font-semibold text-on-surface">Subcategoría <span class="text-error">*</span></label>
+            <select class="h-10 rounded-md border border-on-surface/20 bg-surface px-3 text-sm text-on-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" formControlName="idSubcategoria">
+              <option [value]="null" disabled>Seleccione una subcategoría</option>
+              @for (sub of subcategorias(); track sub.id) {
+                <option [value]="sub.id">{{ sub.nombre }}</option>
+              }
+            </select>
+            @if (form.controls.idSubcategoria.invalid && form.controls.idSubcategoria.touched) {
+              <span class="text-xs text-error">Campo requerido</span>
+            }
+          </div>
+
+          <div class="flex flex-col space-y-1 w-full">
+            <label class="font-label text-sm font-semibold text-on-surface">Marca <span class="text-error">*</span></label>
+            <select class="h-10 rounded-md border border-on-surface/20 bg-surface px-3 text-sm text-on-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" formControlName="idMarca">
+              <option [value]="null" disabled>Seleccione una marca</option>
+              @for (marca of marcas(); track marca.id) {
+                <option [value]="marca.id">{{ marca.nombre }}</option>
+              }
+            </select>
+            @if (form.controls.idMarca.invalid && form.controls.idMarca.touched) {
+              <span class="text-xs text-error">Campo requerido</span>
+            }
+          </div>
+
+          <div class="w-full">
+            <app-input label="Nombre base *" formControlName="nombreBase" placeholder="Ej. Coca Cola" [error]="(form.controls.nombreBase.invalid && form.controls.nombreBase.touched) ? 'Requerido, max 100 caracteres' : ''"></app-input>
+          </div>
+
+          <div class="w-full">
+            <app-input label="Variante" formControlName="variante" placeholder="Ej. Zero" [error]="(form.controls.variante.invalid && form.controls.variante.touched) ? 'Max 50 caracteres' : ''"></app-input>
+          </div>
+
+          <div class="w-full">
+            <app-input label="Medida valor" formControlName="medidaValor" placeholder="Ej. 600" [error]="(form.controls.medidaValor.invalid && form.controls.medidaValor.touched) ? 'Max 10 caracteres' : ''"></app-input>
+          </div>
+
+          <div class="w-full">
+            <app-input label="Medida unidad" formControlName="medidaUnidad" placeholder="Ej. ml, kg, L" [error]="(form.controls.medidaUnidad.invalid && form.controls.medidaUnidad.touched) ? 'Max 5 caracteres' : ''"></app-input>
+          </div>
+
+          <div class="w-full">
+            <app-input type="number" label="Precio costo *" formControlName="precioCosto" placeholder="0.00" [error]="(form.controls.precioCosto.invalid && form.controls.precioCosto.touched) ? 'Requerido, mayor a 0' : ''"></app-input>
+          </div>
+
+          <div class="w-full">
+            <app-input type="number" label="Precio venta *" formControlName="precioVenta" placeholder="0.00" [error]="(form.controls.precioVenta.invalid && form.controls.precioVenta.touched) ? 'Requerido, mayor a 0' : ''"></app-input>
+            @if (showPriceWarning()) {
+              <span class="text-xs text-warning mt-1 block">Advertencia: El precio de venta debe ser mayor al costo.</span>
+            }
+          </div>
+
+          <div class="w-full md:col-span-2">
+            <app-input label="Imagen URL" formControlName="imagenUrl" placeholder="https://..." [error]="(form.controls.imagenUrl.invalid && form.controls.imagenUrl.touched) ? 'Formato de URL inválido' : ''"></app-input>
+            
+            @if (form.controls.imagenUrl.valid && form.controls.imagenUrl.value) {
+              <div class="mt-4 p-4 border border-on-surface/10 rounded-xl flex justify-center bg-surface-container">
+                <img [src]="form.controls.imagenUrl.value" alt="Vista previa" class="max-h-48 rounded object-contain bg-surface" (error)="onImageError($event)">
+              </div>
+            }
+          </div>
+        </div>
+
+            <!-- Sección de Eliminación Lógica (Estado) -->
+            <div class="col-span-full mt-2 rounded-xl border border-on-surface/10 bg-surface-container-low p-4">
+            <div class="flex items-center justify-between">
+                <div class="space-y-1">
+                <h3 class="font-label text-sm font-bold text-on-surface">Estado</h3>
+                </div>
+                
+                <label class="relative inline-flex cursor-pointer items-center">
+                <input type="checkbox" formControlName="estado" class="peer sr-only">
+                <!-- Switch Estilizado -->
+                <div class="peer h-6 w-11 rounded-full bg-on-surface/20 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none"></div>
+                <span class="ml-3 font-label text-sm font-semibold text-on-surface">
+                    {{ form.controls.estado.value ? 'Activo' : 'Inactivo' }}
+                </span>
+                </label>
+            </div>
+            </div>
+
+        <div class="mt-6 flex justify-end gap-3 border-t border-on-surface/10 pt-6">
+          <button type="button" (click)="onCancel()" class="rounded-full px-4 py-2 font-label text-sm font-semibold text-on-surface hover:bg-on-surface/10" [disabled]="saving()">
+            Cancelar
+          </button>
+          <button type="submit" class="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 font-label text-sm font-semibold text-on-primary hover:bg-primary/90 disabled:opacity-50" [disabled]="form.invalid || saving() || dataError().length > 0">
+            @if (saving()) { <span class="loading loading-spinner loading-sm"></span> }
+            {{ submitLabel() }}
+          </button>
+        </div>
+      </form>
+    }
+
+    
+  </app-card>
+</div>
+
+<app-admin-approval-modal 
+  [visible]="approvalVisible()" 
+  [loading]="approvalLoading()" 
+  [errorMessage]="approvalError()" 
+  title="Aprobación de Administrador" 
+  (approved)="onAdminApproved($event)" 
+  (cancelled)="onAdminCancelled()">
+</app-admin-approval-modal>

@@ -1,0 +1,107 @@
+<section class="space-y-6">
+  <header class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div class="space-y-2">
+      <h1 class="font-headline text-3xl font-extrabold text-on-surface">Productos</h1>
+      <p class="font-body text-sm text-on-surface-variant">Listado de productos registrados en el sistema.</p>
+    </div>
+    <a routerLink="/dashboard/logistica/productos/nuevo" class="inline-flex items-center rounded-full border border-on-surface/10 bg-surface-container px-4 py-2 font-label text-sm font-semibold text-primary hover:bg-surface-container-high">
+      Nuevo producto
+    </a>
+  </header>
+
+  @if (errorMessage().length > 0) {
+    <p class="text-sm font-medium text-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <app-card>
+      <p class="text-sm text-on-surface-variant">Cargando productos...</p>
+    </app-card>
+  } @else {
+    <app-card>
+      @if (productos().length === 0) {
+        <p class="text-sm text-on-surface-variant">No hay productos registrados.</p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-on-surface/10 text-on-surface-variant">
+                <th class="px-3 py-2 font-semibold w-16 text-center">Img</th>
+                <th class="px-3 py-2 font-semibold">Nombre</th>
+                <th class="px-3 py-2 font-semibold">SKU</th>
+                <th class="px-3 py-2 font-semibold">Marca</th>
+                <th class="px-3 py-2 font-semibold">Sub-Categoría</th>
+                <th class="px-3 py-2 font-semibold">Precio Costo</th>
+                <th class="px-3 py-2 font-semibold">Precio Venta</th>
+                <th class="px-3 py-2 font-semibold">Estado</th>
+                <th class="px-3 py-2 font-semibold text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (producto of productos(); track producto.id) {
+                <tr class="border-b border-on-surface/10 text-on-surface">
+                  <td class="px-3 py-3 align-middle">
+                    <div class="relative group h-14 w-14">
+                      <!-- Contenedor principal de la imagen -->
+                      <div class="h-full w-full overflow-hidden rounded-2xl border-2 border-white/10 bg-surface-container-low shadow-md transition-all duration-300 group-hover:rounded-xl group-hover:border-primary/30 group-hover:shadow-lg">
+                        
+                        @if (producto.imagenUrl) {
+                          <img 
+                            [src]="producto.imagenUrl" 
+                            [alt]="producto.nombreBase" 
+                            class="h-full w-full object-contain p-1 transition-transform duration-500 group-hover:scale-110"
+                            loading="lazy">
+                        } @else {
+                          <!-- Placeholder con estilo Glassmorphism -->
+                          <div class="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-surface-container-high to-surface-container-low">
+                            <span class="material-icons text-on-surface-variant/20 text-xl">inventory_2</span>
+                            <span class="text-[8px] font-bold uppercase tracking-tighter text-on-surface-variant/30">Sin Foto</span>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-3 py-2">{{ producto.nombreBase }}{{ producto.variante ? (' - ' + producto.variante) : '' }}</td>
+                  <td class="px-3 py-2">{{ producto.sku ?? '' }}</td>
+                  <td class="px-3 py-2">{{ producto.nombreMarca ?? '' }}</td>
+                  <td class="px-3 py-2">{{ producto.nombreSubCategoria ?? '' }}</td>
+                  <td class="px-3 py-4 text-on-surface-variant">
+                    S/ {{ (producto.precioCosto || 0).toFixed(2) }}
+                  </td>
+                  <td class="px-3 py-4 font-bold text-primary">
+                    S/ {{ (producto.precioVenta || 0).toFixed(2) }}
+                  </td>
+                  <td class="px-3 py-4 text-center align-middle">
+                          <span [class]="producto.estado ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'"
+                                class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider">
+                            {{ producto.estado ? 'Activo' : 'Inactivo' }}
+                          </span>
+                  </td>
+                  <td class="px-3 py-2">
+                    <div class="flex items-center justify-center gap-3">
+                      <!-- Botón Editar -->
+                      <a [routerLink]="['/dashboard/logistica/productos/editar', producto.id]" 
+                        class="inline-flex h-9 items-center rounded-full border border-on-surface/10 bg-surface-container px-4 text-[0.8rem] font-semibold text-primary hover:bg-surface-container-high transition">
+                        Editar
+                      </a>
+                     
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </app-card>
+  }
+
+  <!-- Modal de aprobación al final de la sección -->
+  <app-admin-approval-modal 
+    [visible]="approvalVisible()" 
+    [loading]="approvalLoading()" 
+    [errorMessage]="approvalError()" 
+    (approved)="onAdminApproved($event)" 
+    (cancelled)="onAdminCancelled()">
+  </app-admin-approval-modal>
+</section>

@@ -12,7 +12,7 @@ services:
     volumes:
       # Mapeo directo para persistencia en tu carpeta local
       - ./db/DB_TiendasGo:/var/opt/mssql/tiendasgo_db
-
+    command: /opt/mssql/bin/sqlservr -T272
   # --- MICROSERVICIOS (BACKEND) ---
   
   # 1. Auth & Core

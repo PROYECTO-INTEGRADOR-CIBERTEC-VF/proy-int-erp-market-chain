@@ -14,7 +14,7 @@ public class SubCategoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_subcategoria")
-    private Long id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria", nullable = false)
@@ -27,6 +27,9 @@ public class SubCategoria {
 
     @Column(name = "estado")
     private Boolean activo;
+
+    @Column(name = "prefijo", columnDefinition = "CHAR(3)")
+    private String prefijo;
 }
 
 

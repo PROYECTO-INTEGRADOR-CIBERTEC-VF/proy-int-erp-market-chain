@@ -8,12 +8,14 @@ import java.util.List;
 public interface IMarcaService {
     List<MarcaResponse> listarTodos();
 
-    MarcaResponse obtenerPorId(Long id);
+    MarcaResponse obtenerPorId(Integer id);
 
     MarcaResponse crear(MarcaRequest req);
 
-    MarcaResponse actualizar(Long id, MarcaRequest req);
+    String generarCodigoPorNombre(String nombre);
 
-    void eliminar(Long id);
+    MarcaResponse actualizar(Integer id, MarcaRequest req);
+
+    void eliminar(Integer id);
 }
 

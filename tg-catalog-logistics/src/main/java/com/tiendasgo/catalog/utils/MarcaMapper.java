@@ -13,7 +13,7 @@ public class MarcaMapper {
         return Marca.builder()
                 .nombre(req.getNombre())
                 .codigoMarca(req.getCodigoMarca())
-                .activo(Boolean.TRUE)
+                .activo(req.getActivo() != null ? req.getActivo() : true)
                 .build();
     }
 
