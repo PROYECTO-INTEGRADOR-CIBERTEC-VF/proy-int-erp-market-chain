@@ -9,6 +9,7 @@ import com.tiendasgo.catalog.domain.repository.SubCategoriaRepository;
 import com.tiendasgo.catalog.dto.request.ProductoRequest;
 import com.tiendasgo.catalog.dto.response.ProductoResponse;
 import com.tiendasgo.catalog.exceptions.DuplicateResourceException;
+import com.tiendasgo.catalog.exceptions.InvalidPriceException;
 import com.tiendasgo.catalog.exceptions.ResourceNotFoundException;
 import com.tiendasgo.catalog.services.IProductoService;
 import com.tiendasgo.catalog.utils.ProductoMapper;
@@ -36,6 +37,9 @@ public class ProductoServiceImpl implements IProductoService {
     @Override
     @Transactional
     public ProductoResponse crear(ProductoRequest req) {
+        if (req.getPrecioVenta().compareTo(req.getPrecioCosto()) <= 0) {
+            throw new InvalidPriceException("El precio de venta debe ser mayor al precio de costo.");
+        }
         Marca marca = marcaRepository.findById(req.getIdMarca())
                 .orElseThrow(() -> new ResourceNotFoundException("Marca no encontrada: " + req.getIdMarca()));
         SubCategoria subCategoria = subCategoriaRepository.findById(req.getIdSubCategoria())
