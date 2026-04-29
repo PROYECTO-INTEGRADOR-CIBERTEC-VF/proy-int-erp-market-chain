@@ -36,7 +36,8 @@ export class MarcasFormPageComponent {
 
   protected readonly form = this.fb.group({
     nombre: ['', [Validators.required, Validators.maxLength(50)]],
-    codigo: [{ value: '', disabled: true }]
+    codigo: [{ value: '', disabled: true }],
+    activo: [true]
   });
 
   constructor() {
@@ -50,22 +51,25 @@ export class MarcasFormPageComponent {
     return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
   }
 
-  private loadMarca(id: number): void {
-    this.loading.set(true);
-    this.error.set('');
+private loadMarca(id: number): void {
+  this.loading.set(true);
+  this.error.set('');
 
-    this.marcasApi.getById(id).subscribe({  // ← marcasApi en vez de marcasService
-      next: (marca) => {
-        this.form.patchValue({ nombre: marca.nombre, codigo: marca.codigoMarca ?? '' });
-        this.loading.set(false);
-      },
-      error: (error: unknown) => {
-        this.loading.set(false);
-        this.error.set(this.resolveError(error, 'No se pudo cargar la marca.'));
-      }
-    });
-  }
-
+  this.marcasApi.getById(id).subscribe({
+    next: (marca) => {
+      this.form.patchValue({ 
+        nombre: marca.nombre, 
+        codigo: marca.codigoMarca ?? '',
+        activo: marca.activo ?? true
+      });
+      this.loading.set(false);
+    },
+    error: (error: unknown) => {
+      this.loading.set(false);
+      this.error.set(this.resolveError(error, 'No se pudo cargar la marca.'));
+    }
+  });
+}
   protected onSubmit(): void {
     if (this.form.invalid || this.saving()) {
       this.form.markAllAsTouched();
@@ -75,7 +79,8 @@ export class MarcasFormPageComponent {
     const raw = this.form.getRawValue();
     const payload = {
       nombre: (raw.nombre ?? '').toString().trim(),
-      codigoMarca: (raw.codigo ?? '').toString().trim() || null
+      codigoMarca: (raw.codigo ?? '').toString().trim() || null,
+      activo: raw.activo ?? true
     };
 
     this.pendingPayload.set(payload);
@@ -127,9 +132,8 @@ export class MarcasFormPageComponent {
     this.pendingPayload.set(null);
   }
 
-  private createMarca(payload: { nombre: string; codigoMarca?: string | null }, token: string): void {
-    // creation keeps relying on server-generated codigo; send only nombre
-    this.marcasApi.crearMarca(payload.nombre, token).subscribe({
+  private createMarca(payload: any, token: string): void {
+    this.marcasApi.crearMarca(payload, token).subscribe({
       next: () => void this.router.navigate(['/dashboard/logistica/marcas']),
       error: (error: unknown) => {
         this.saving.set(false);
@@ -146,21 +150,22 @@ export class MarcasFormPageComponent {
     });
   }
 
-  private updateMarca(id: number, payload: { nombre: string; codigoMarca?: string | null }, token: string): void {
-    this.marcasApi.actualizarMarca(id, { nombre: payload.nombre, codigoMarca: payload.codigoMarca ?? null }, token).subscribe({
+  private updateMarca(id: number, payload: any, token: string): void {
+
+    this.marcasApi.actualizarMarca(id, payload, token).subscribe({
       next: () => void this.router.navigate(['/dashboard/logistica/marcas']),
       error: (error: unknown) => {
         this.saving.set(false);
-        const httpErr = error as HttpErrorResponse;
-        if (httpErr?.status === 401 || httpErr?.status === 403) {
-          this.approvalVisible.set(true);
-          this.approvalError.set('Se requiere validación ADMIN.');
-          return;
-        }
+          const httpErr = error as HttpErrorResponse;
+          if (httpErr?.status === 401 || httpErr?.status === 403) {
+            this.approvalVisible.set(true);
+            this.approvalError.set('Se requiere validación ADMIN.');
+            return;
+          }
 
-        this.approvalVisible.set(false);
-        this.error.set(this.resolveError(error, 'No se pudo actualizar la marca.'));
-      }
+          this.approvalVisible.set(false);
+          this.error.set(this.resolveError(error, 'No se pudo actualizar la marca.'));
+        }
     });
   }
 

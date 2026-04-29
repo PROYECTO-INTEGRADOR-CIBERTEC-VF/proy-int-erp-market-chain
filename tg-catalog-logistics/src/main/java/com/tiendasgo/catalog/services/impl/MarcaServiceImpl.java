@@ -73,6 +73,8 @@ public class MarcaServiceImpl implements IMarcaService {
             existing.setCodigoMarca(nuevoCodigo);
         }
 
+        existing.setActivo(req.getActivo() != null ? req.getActivo() : existing.getActivo());
+
         Marca updated = marcaRepository.save(existing);
         return marcaMapper.toResponse(updated);
     }

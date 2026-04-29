@@ -13,6 +13,23 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="grid gap-4 max-w-xl">
     <app-input formControlName="nombre" label="Nombre" placeholder="Nombre de la marca" />
 
+    <!-- Switch de Eliminación Lógica (Dentro de la card del formulario) -->
+    <div class="mt-4 rounded-xl border border-on-surface/10 bg-surface-container-low p-4">
+      <div class="flex items-center justify-between">
+        <div class="space-y-1">
+          <h3 class="font-label text-sm font-bold text-on-surface">Estado de la Marca</h3>
+          <p class="font-body text-xs text-on-surface-variant">
+            Si se desactiva, no aparecerá como opción al crear o editar productos.
+          </p>
+        </div>
+        
+        <label class="relative inline-flex cursor-pointer items-center">
+          <input type="checkbox" formControlName="activo" class="peer sr-only">
+          <div class="peer h-6 w-11 rounded-full bg-on-surface/20 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none"></div>
+        </label>
+      </div>
+    </div>
+
     <div class="flex gap-2">
       <button type="button" (click)="onCancel()" class="h-12 rounded-full border border-on-surface/10 bg-surface-container px-5 font-semibold">Cancelar</button>
       <button type="submit" class="h-12 rounded-full border border-on-surface/10 bg-primary px-5 font-semibold text-on-primary-fixed">{{ submitLabel() }}</button>

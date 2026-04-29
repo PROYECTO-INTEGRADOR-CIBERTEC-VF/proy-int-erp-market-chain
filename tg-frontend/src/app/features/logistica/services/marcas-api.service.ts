@@ -44,10 +44,10 @@ export class MarcasApiService {
   }
 
   // Actualizar marca (envía codigoMarca para evitar que quede NULL)
-  actualizarMarca(id: number, data: { nombre: string; codigoMarca?: string | null }, token: string): Observable<MarcaResponse> {
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' });
-    return this.http.put<MarcaResponse>(`http://localhost:8081/api/catalog/marcas/${id}`, data, { headers });
-  }
+actualizarMarca(id: number, data: any, token: string): Observable<MarcaResponse> {
+  const headers = new HttpHeaders({ Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' });
+  return this.http.put<MarcaResponse>(`${this.baseUrl}/${id}`, data, { headers });
+}
 
   // Borrar marca (ADMIN)
   borrarMarca(id: number, token: string): Observable<void> {

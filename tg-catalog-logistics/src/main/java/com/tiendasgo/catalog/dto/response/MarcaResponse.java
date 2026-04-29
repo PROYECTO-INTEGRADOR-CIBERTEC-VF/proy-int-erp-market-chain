@@ -10,5 +10,6 @@ public class MarcaResponse {
     private Integer id;
     private String nombre;
     private String codigoMarca;
+    private Boolean activo;
 }
 
